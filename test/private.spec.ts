@@ -7,8 +7,10 @@ import {
   OrderSide,
   OrderType,
   PROD,
+  QA,
   Trace,
 } from '../src';
+import BigNumber from 'bignumber.js';
 
 describe('Private Api Example', () => {
   let apexClient: ApexClient;
@@ -45,13 +47,25 @@ describe('Private Api Example', () => {
   });
 
   it('POST Creating Orders', async () => {
+    const symbol = 'BTC-USDC';
+    const price = '24046.0';
+    const size = '0.01';
+
+    const baseCoinRealPrecision = apexClient.symbols[symbol].baseCoinRealPrecision;
+    const takerFeeRate = apexClient.account.takerFeeRate;
+
+    const limitFee = new BigNumber(price)
+      .multipliedBy(takerFeeRate)
+      .multipliedBy(size)
+      .toFixed(baseCoinRealPrecision, BigNumber.ROUND_DOWN);
+
     const apiOrder = {
-      limitFee: '30',
-      price: '24046.0',
+      limitFee,
+      price,
       reduceOnly: false,
       side: OrderSide.BUY,
-      size: '0.01',
-      symbol: ApexMarket.BTC_USDC,
+      size,
+      symbol,
       timeInForce: 'GOOD_TIL_CANCEL',
       type: OrderType.LIMIT,
       clientOrderId: generateRandomClientId(),
@@ -122,8 +136,13 @@ describe('Private Api Example', () => {
     const { historicalPnl, totalSize } = await apexClient.privateApi.historicalPNL();
     Trace.print(historicalPnl, totalSize);
   });
-  it('GET User Historial Profit and Loss', async () => {
+  it("GET Yesterday's Profit & Loss", async () => {
     const yesterdayPNL = await apexClient.privateApi.yesterdayPNL();
     Trace.print(yesterdayPNL);
+  });
+
+  it('GET Account Balance', async () => {
+    const accountBalance = await apexClient.privateApi.accountBalance();
+    Trace.print(accountBalance);
   });
 });

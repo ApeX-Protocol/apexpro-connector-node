@@ -69,7 +69,7 @@ interface OrderParamsBase {
   positionId: string;
   humanSize: string;
   limitFee: string; // Max fee fraction, e.g. 0.01 is a max 1% fee.
-  symbol: Market;
+  symbol: string;
   side: OrderSide;
   expirationIsoTimestamp: string;
 }

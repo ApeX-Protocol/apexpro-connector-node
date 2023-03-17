@@ -1,7 +1,18 @@
 import { ClientConfig, ENV, PROD } from './Constant';
 
 import { asEcKeyPair, asSimpleKeyPair, setConfig, setCurrency, setSymbols } from './starkex-lib';
-import { ApiKeyCredentials, ApiTool, Clock, CurrencyObject, getPrecision, KeyPair } from './apexpro';
+import {
+  AccountObject,
+  ApiKeyCredentials,
+  ApiTool,
+  Clock,
+  CurrencyObject,
+  getPrecision,
+  KeyPair,
+  PerpetualContractObject,
+  SymbolInfoObject,
+  UserObject,
+} from './apexpro';
 import { PublicApi } from './PublicApi';
 import { PrivateApi } from './PrivateApi';
 
@@ -11,6 +22,10 @@ export class ApexClient {
   privateApi: PrivateApi;
   clientConfig: ClientConfig;
   env: ENV;
+  user: UserObject;
+  account: AccountObject;
+  symbols: { [key: string]: SymbolInfoObject };
+  currency: CurrencyObject[];
 
   constructor(env: ENV = PROD) {
     this.apiTool = new ApiTool(env);
@@ -39,11 +54,13 @@ export class ApexClient {
   }
 
   private async initConfig() {
-    const symbols: { [key: string]: any } = {};
+    this.user = await this.privateApi.user();
+    this.account = await this.privateApi.getAccount(this.clientConfig.accountId, this.user.ethereumAddress);
+    const symbols: { [key: string]: PerpetualContractObject } = {};
     const { perpetualContract: groupSymbols = [], currency, multiChain, global } = await this.publicApi.symbols();
     if (groupSymbols.length) {
-      groupSymbols.forEach((obj: { [key: string]: any }, idx: number) => {
-        const symbolInfo: { [key: string]: any } = {
+      groupSymbols.forEach((obj: PerpetualContractObject, idx: number) => {
+        const symbolInfo: SymbolInfoObject = {
           ...obj,
         };
         symbolInfo.rankIdx = idx;
@@ -65,6 +82,8 @@ export class ApexClient {
         symbols[obj.symbol] = symbolInfo;
       });
     }
+    this.symbols = symbols;
+    this.currency = currency;
     setSymbols(symbols);
     setCurrency(currency);
     setConfig({

@@ -1,3 +1,5 @@
+import { getPrecision } from '../tool';
+
 export interface TickerObject {
   fundingRate: string;
   highPrice24h: string;
@@ -139,4 +141,18 @@ export interface HistoryFundingObject {
   price: string;
   fundingTime: number;
   fundingTimestamp: number;
+}
+export interface SymbolInfoObject extends PerpetualContractObject {
+  rankIdx?: number;
+  pricePrecision?: number;
+  priceStep?: number;
+  sizePrecision?: number;
+  sizeStep?: number;
+  baseCoin?: string;
+  currentCoin?: string;
+  baseCoinPrecision?: number;
+  baseCoinRealPrecision?: number;
+  currentCoinPrecision?: number;
+  baseCoinIcon?: string;
+  currentCoinIcon?: string;
 }

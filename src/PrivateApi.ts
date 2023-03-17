@@ -1,6 +1,7 @@
 import { addOrderExpirationBufferHours, isoTimestampToEpochHours, SignableOrder } from './starkex-lib';
 import cryptojs from 'crypto-js';
 import {
+  AccountBalanceObject,
   AccountObject,
   BasicException,
   FundingRateObject,
@@ -174,7 +175,7 @@ export class PrivateApi {
    * @param type  "LIMIT", "MARKET","STOP_LIMIT", "STOP_MARKET", "TAKE_PROFIT_LIMIT", "TAKE_PROFIT_MARKET"
    * @param size Size
    * @param price Price
-   * @param limitFee  limitFee = price * size * takerFeeRate( from GET /v1/account)
+   * @param limitFee  limitFee = price * size * takerFeeRate  ( from GET /v1/account)
    * @param timeInForce "GOOD_TIL_CANCEL", "FILL_OR_KILL", "IMMEDIATE_OR_CANCEL", "POST_ONLY"
    * @param triggerPrice Trigger price
    * @param trailingPercent Conditional order trailing-stop
@@ -183,7 +184,7 @@ export class PrivateApi {
   async createOrder(
     clientOrderId: string,
     positionId: string,
-    symbol: Market,
+    symbol: string,
     side: 'BUY' | 'SELL',
     type: 'LIMIT' | 'MARKET' | 'STOP_LIMIT' | 'STOP_MARKET' | 'TAKE_PROFIT_LIMIT' | 'TAKE_PROFIT_MARKET',
     size: string,
@@ -193,7 +194,7 @@ export class PrivateApi {
     triggerPrice?: string,
     trailingPercent?: string,
     reduceOnly?: boolean,
-  ): Promise<{ order: OrderResponseObject }> {
+  ): Promise<OrderObject> {
     clientOrderId = clientOrderId || generateRandomClientId();
     const expirationIsoTimestamp = (Date.now() + 30 * 24 * 60 * 60 * 1000) as any;
     const signature: string = await this.getSignature('', () => {
@@ -400,5 +401,12 @@ export class PrivateApi {
       symbol,
       initialMarginRate,
     });
+  }
+
+  /**
+   * GET Account Balance
+   */
+  async accountBalance(): Promise<AccountBalanceObject> {
+    return this.request('/api/v1/account-balance', 'get', {});
   }
 }

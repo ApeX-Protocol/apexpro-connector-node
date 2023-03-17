@@ -121,7 +121,7 @@ export interface WorstPriceObject {
 export interface CreateOrderOptionsObject {
   clientOrderId: string;
   positionId: string;
-  symbol: Market;
+  symbol: string;
   side: 'BUY' | 'SELL';
   type: 'LIMIT' | 'MARKET' | 'STOP_LIMIT' | 'STOP_MARKET' | 'TAKE_PROFIT_LIMIT' | 'TAKE_PROFIT_MARKET';
   size: string;
@@ -193,4 +193,10 @@ export enum OrderStatus {
   FILLED = 'FILLED',
   CANCELED = 'CANCELED',
   UNTRIGGERED = 'UNTRIGGERED',
+}
+export interface AccountBalanceObject {
+  totalEquityValue: string;
+  availableBalance: string;
+  initialMargin: string;
+  maintenanceMargin: string;
 }
