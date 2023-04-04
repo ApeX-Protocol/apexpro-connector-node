@@ -57,7 +57,7 @@ describe('Private Api Example', () => {
     const limitFee = new BigNumber(price)
       .multipliedBy(takerFeeRate)
       .multipliedBy(size)
-      .toFixed(baseCoinRealPrecision, BigNumber.ROUND_DOWN);
+      .toFixed(baseCoinRealPrecision, BigNumber.ROUND_UP);
 
     const apiOrder = {
       limitFee,
