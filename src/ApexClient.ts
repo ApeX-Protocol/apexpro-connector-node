@@ -56,9 +56,12 @@ export class ApexClient {
   private async initConfig() {
     this.user = await this.privateApi.user();
     this.account = await this.privateApi.getAccount(this.clientConfig.accountId, this.user.ethereumAddress);
-    if (this.account.id !== this.clientConfig.accountId) {
-      throw new Error('Account Id is not match, please check your account id');
-    }
+    this.checkAccountId();
+    this.checkStarkKey();
+    await this.initSymbol();
+  }
+
+  private async initSymbol() {
     const symbols: { [key: string]: PerpetualContractObject } = {};
     const { perpetualContract: groupSymbols = [], currency, multiChain, global } = await this.publicApi.symbols();
     if (groupSymbols.length) {
@@ -94,5 +97,25 @@ export class ApexClient {
       global,
       currency,
     });
+  }
+
+  private checkAccountId() {
+    if (this.account.id !== this.clientConfig.accountId) {
+      throw new Error('Account Id is not match, please check your account id.');
+    }
+  }
+
+  private checkStarkKey() {
+    let accountStarkPublicKey = this.account.starkKey.toLowerCase();
+    if (!accountStarkPublicKey.startsWith('0x')) {
+      accountStarkPublicKey = '0x' + accountStarkPublicKey;
+    }
+    let publicKey = this.clientConfig.starkKeyPair.publicKey;
+    if (!publicKey.startsWith('0x')) {
+      publicKey = '0x' + publicKey;
+    }
+    if (accountStarkPublicKey.toLowerCase() !== publicKey.toLowerCase()) {
+      throw new Error('Stark Key is not match, please check your stark private key.');
+    }
   }
 }
