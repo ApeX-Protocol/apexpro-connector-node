@@ -56,6 +56,9 @@ export class ApexClient {
   private async initConfig() {
     this.user = await this.privateApi.user();
     this.account = await this.privateApi.getAccount(this.clientConfig.accountId, this.user.ethereumAddress);
+    if (this.account.id !== this.clientConfig.accountId) {
+      throw new Error('Account Id is not match, please check your account id');
+    }
     const symbols: { [key: string]: PerpetualContractObject } = {};
     const { perpetualContract: groupSymbols = [], currency, multiChain, global } = await this.publicApi.symbols();
     if (groupSymbols.length) {
