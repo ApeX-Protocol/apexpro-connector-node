@@ -81,6 +81,7 @@ export class PublicApi {
       interval,
       start,
       end,
+      limit
     });
   }
   /**

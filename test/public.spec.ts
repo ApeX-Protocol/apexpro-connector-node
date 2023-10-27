@@ -1,4 +1,4 @@
-import { ApexClient, PROD, QA, Trace } from '../src';
+import {ApexClient, PROD, QA, Trace} from '../src';
 
 describe('Public Api Example', () => {
   let apexClient: ApexClient;
@@ -32,7 +32,7 @@ describe('Public Api Example', () => {
 
   //
   it('GET Candlestick Chart Data', async () => {
-    const kline = await apexClient.publicApi.klines('BTCUSDC', '1');
+    const kline = await apexClient.publicApi.klines('BTCUSDC', '1', undefined, undefined, 100);
     Trace.print(kline);
   });
 
