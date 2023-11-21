@@ -1,3 +1,4 @@
+import axios from 'axios';
 import cryptojs from 'crypto-js';
 // import queryString from 'query-string';
 import BN from 'bn.js';
@@ -33,36 +34,51 @@ const genStarkKey = async (
   const signer = new SignOnboardingAction(web3, env.registerChainId);
 
   const sig = await signer.sign(account, signingMethod, genStarkKeyMessage, env);
-  const signature = typeof sig === 'string' ? sig : sig?.value;
+  const signature = typeof sig === 'string' ? sig : sig.value;
 
-  const l2KeyHash = typeof sig === 'string' ? '' : sig?.l2KeyHash;
+  const l2KeyHash = typeof sig === 'string' ? '' : sig.l2KeyHash;
 
   const keyPair = keyPairFromData(Buffer.from(stripHexPrefix(signature), 'hex'));
   return { key: keyPair, l2KeyHash, signer };
 };
 
 const genNonce = async (address: string, publicKey: string, env: ENV, params: { [key: string]: any } = {}) => {
-  const tempRes = await fetch(`${env.url}/api/v1/generate-nonce`, {
-    "headers": {
-      "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-    },
-    "body": QueryString.stringify({
-      ethAddress: address,
-      starkKey: publicKey,
-      chainId: params?.chainId,
-      ...params,
-    }),
-    "method": "POST",
-    "mode": "cors",
-  });
-  const res = await tempRes.json()
+  // const tempRes = await fetch(`${env.url}/api/v1/generate-nonce`, {
+  //   "headers": {
+  //     "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+  //   },
+  //   "body": QueryString.stringify({
+  //     ethAddress: address,
+  //     starkKey: publicKey,
+  //     chainId: params.chainId,
+  //     ...params,
+  //   }),
+  //   "method": "POST",
+  //   "mode": "cors",
+  // });
+  // const res = await tempRes.json()
+
+  const qrs = "?"+QueryString.stringify({
+    ethAddress: address,
+    starkKey: publicKey,
+    chainId: params.chainId,
+    ...params,
+  })
+
+  const res = await axios.post(`${env.url}/api/v1/generate-nonce${qrs}`, {}, {
+    headers: {
+      'Content-Type': "application/x-www-form-urlencoded; charset=UTF-8"
+    }
+  })
+
+
 
   // const res = await axios.post(
   //   `${envUrl}/api/v1/generate-nonce`,
   //   {
   //     ethAddress: address,
   //     starkKey: publicKey,
-  //     chainId: params?.chainId,
+  //     chainId: params.chainId,
   //     // ...params,
   //   },
   //   {
@@ -72,7 +88,7 @@ const genNonce = async (address: string, publicKey: string, env: ENV, params: { 
   //   },
   // );
 
-  return res;
+  return res.data;
 };
 
 const genNewSignature = async ({
@@ -129,22 +145,43 @@ const basicOnboarding = async (
   };
   const signature = await signer.sign(account, signingMethod, message, env);
 
-  const tempRes = await fetch(`${env.url}/api/v2/onboarding`, {
-    "headers": {
-      "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-      'APEX-SIGNATURE': typeof signature === 'string' ? signature : signature?.value,
+  // const tempRes = await fetch(`${env.url}/api/v2/onboarding`, {
+  //   "headers": {
+  //     "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+      // 'APEX-SIGNATURE': typeof signature === 'string' ? signature : signature.value,
+      // 'Apex-Ethereum-Address': account
+  //   },
+    // "body": QueryString.stringify({
+    //   starkKey: keyPair.publicKey,
+    //   starkKeyYCoordinate: keyPair.publicKeyYCoordinate,
+    //   ethereumAddress: account,
+    //   token: token || 'USDC',
+    // }),
+  //   "method": "POST",
+  //   "mode": "cors",
+  // });
+  // const res = await tempRes.json()
+
+
+
+
+  const qrs = "?"+QueryString.stringify({
+    starkKey: keyPair.publicKey,
+    starkKeyYCoordinate: keyPair.publicKeyYCoordinate,
+    ethereumAddress: account,
+    token: token || 'USDC',
+  })
+
+
+
+  const res = await axios.post(`${env.url}/api/v2/onboarding${qrs}`, {}, {
+    headers: {
+      'Content-Type': "application/x-www-form-urlencoded; charset=UTF-8",
+      'APEX-SIGNATURE': typeof signature === 'string' ? signature : signature.value,
       'Apex-Ethereum-Address': account
-    },
-    "body": QueryString.stringify({
-      starkKey: keyPair.publicKey,
-      starkKeyYCoordinate: keyPair.publicKeyYCoordinate,
-      ethereumAddress: account,
-      token: token || 'USDC',
-    }),
-    "method": "POST",
-    "mode": "cors",
-  });
-  const res = await tempRes.json()
+    }
+  })
+
   return res
 
   // return axios.post(
@@ -157,7 +194,7 @@ const basicOnboarding = async (
   //   },
   //   {
   //     headers: {
-  //       'APEX-SIGNATURE': typeof signature === 'string' ? signature : signature?.value,
+  //       'APEX-SIGNATURE': typeof signature === 'string' ? signature : signature.value,
   //       'Apex-Ethereum-Address': account
   //     },
   //   },
@@ -188,22 +225,40 @@ const simplifyOnboarding = async (
     nonce,
   });
 
-  const tempRes = await fetch(`${env.url}/api/v2/onboarding`, {
-    "headers": {
-      "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+  // const tempRes = await fetch(`${env.url}/api/v2/onboarding`, {
+  //   "headers": {
+  //     "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+      // 'APEX-SIGNATURE': simplifySignature,
+      // 'Apex-Ethereum-Address': account
+  //   },
+  //   "body": QueryString.stringify({
+  //     starkKey: keyPair.publicKey,
+  //     starkKeyYCoordinate: keyPair.publicKeyYCoordinate,
+  //     ethereumAddress: account,
+  //     token: token || 'USDC',
+  //   }),
+  //   "method": "POST",
+  //   "mode": "cors",
+  // });
+  // const res = await tempRes.json()
+
+
+  const qrs = "?"+QueryString.stringify({
+    starkKey: keyPair.publicKey,
+    starkKeyYCoordinate: keyPair.publicKeyYCoordinate,
+    ethereumAddress: account,
+    token: token || 'USDC',
+  })
+
+
+
+  const res = await axios.post(`${env.url}/api/v2/onboarding${qrs}`, {  }, {
+    headers: {
+      'Content-Type': "application/x-www-form-urlencoded; charset=UTF-8",
       'APEX-SIGNATURE': simplifySignature,
       'Apex-Ethereum-Address': account
-    },
-    "body": QueryString.stringify({
-      starkKey: keyPair.publicKey,
-      starkKeyYCoordinate: keyPair.publicKeyYCoordinate,
-      ethereumAddress: account,
-      token: token || 'USDC',
-    }),
-    "method": "POST",
-    "mode": "cors",
-  });
-  const res = await tempRes.json()
+    }
+  })
   return res
 
   // return axios.post(

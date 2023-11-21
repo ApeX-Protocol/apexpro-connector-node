@@ -29,13 +29,13 @@ const getNonce = async (
   options?: { token: 'USDC' | 'USDT'; account: string; chainId: number; version: 'v1' | 'v2' },
 ) => {
   try {
-    const res: any = await genNonce(options?.account || '', key.publicKey, env, { chainId: options?.chainId });
-    if (res?.data?.nonce) {
+    const res: any = await genNonce(options.account || '', key.publicKey, env, { chainId: options.chainId });
+    if (res.data.nonce) {
       await sleep(1000);
       return await onboarding(env, res.data.nonce, key, {
-        account: options?.account,
-        token: options?.token,
-        onboardingVersion: options?.version,
+        account: options.account,
+        token: options.token,
+        onboardingVersion: options.version,
       });
     } else {
       throw new Error('Unkown Error');
@@ -52,10 +52,10 @@ const onboarding = async (
   //
   options?: { account: string; token?: 'USDC' | 'USDT'; onboardingVersion: 'v1' | 'v2' },
 ) => {
-  const status = !!options?.account;
-  const _account = options?.account;
+  const status = !!options.account;
+  const _account = options.account;
   let onboardingFn = basicOnboarding;
-  switch (options?.onboardingVersion) {
+  switch (options.onboardingVersion) {
     case 'v1':
       onboardingFn = basicOnboarding;
     case 'v2':
@@ -70,11 +70,11 @@ const onboarding = async (
         SigningMethod.MetaMaskLatest,
         _account,
         key,
-        options?.token,
+        options.token,
       );
 
-      if (res?.data) {
-        return res?.data;
+      if (res.data) {
+        return res.data;
       } else {
         throw new Error('Unkown Error');
       }

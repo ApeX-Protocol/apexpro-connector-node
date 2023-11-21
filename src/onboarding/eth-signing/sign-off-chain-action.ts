@@ -92,7 +92,7 @@ export abstract class SignOffChainAction<M extends {}> extends Signer {
       // @ts-ignore Fallthrough case in switch.
       case SigningMethod.TypedData:
         // If the private key is available locally, sign locally without using web3.
-        if (walletAccount?.privateKey) {
+        if (walletAccount.privateKey) {
           const wallet = new ethers.Wallet(walletAccount.privateKey);
           const rawSignature = await wallet._signTypedData(
             this.getDomainData(),
@@ -135,7 +135,7 @@ export abstract class SignOffChainAction<M extends {}> extends Signer {
         let messageString = this.getPersonalSignMessage(message);
         // bybitwallet末尾手动添加0
         // @ts-ignore
-        if (this.web3.currentProvider?.isBybit) {
+        if (this.web3.currentProvider.isBybit) {
           messageString += '0';
         }
         // 生成starkKey 把chainId变更为envId

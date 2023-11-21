@@ -83,7 +83,7 @@ export abstract class Signer {
 
     let response;
 
-    if (provider?.isParticleNetwork) {
+    if (provider.isParticleNetwork) {
       response = await provider.request({
         method: 'eth_signTypedData_v4_uniq',
         params: [signer, rpcData],
@@ -137,11 +137,11 @@ export abstract class Signer {
     let response;
 
     try {
-      if (provider?.isParticleNetwork) {
+      if (provider.isParticleNetwork) {
         // @ts-ignore
-        const signature = provider?.auth?.userInfo()?.signature;
+        const signature = provider.auth.userInfo().signature;
         if (!signature) {
-          response = await provider?.request({
+          response = await provider.request({
             method: 'personal_sign_uniq',
             params: [`ApeX Pro\naction: ApeX Pro Onboarding\nonlySignOn: https://pro.apex.exchange`, signer],
             jsonrpc: '2.0',
@@ -154,9 +154,9 @@ export abstract class Signer {
         }
       } else {
         const msg = web3.utils.utf8ToHex(message);
-        // const r = await web3.eth.personal.sign(msg, web3.eth.accounts.wallet?.[0].address, '')
-        if (web3.eth.accounts.wallet?.[0].privateKey) {
-          const tempRes = await web3.eth.accounts.sign(msg, web3.eth.accounts.wallet?.[0].privateKey);
+        // const r = await web3.eth.personal.sign(msg, web3.eth.accounts.wallet.[0].address, '')
+        if (web3.eth.accounts.wallet[0].privateKey) {
+          const tempRes = await web3.eth.accounts.sign(msg, web3.eth.accounts.wallet[0].privateKey);
           response = tempRes.signature
         } else {
           response = await sendAsync({
@@ -172,7 +172,7 @@ export abstract class Signer {
       console.log('error', e);
     }
 
-    const signedMsg = response?.result ? response?.result : response;
+    const signedMsg = response.result ? response.result : response;
     const verifiedAddress = ethers.utils.verifyMessage(message, signedMsg);
 
     let ifValid = false;
@@ -181,7 +181,7 @@ export abstract class Signer {
       // todo 验证
       ifValid = true;
     } else {
-      ifValid = verifiedAddress?.toLowerCase() === signer?.toLowerCase();
+      ifValid = verifiedAddress.toLowerCase() === signer.toLowerCase();
     }
 
     if (!ifValid) {
@@ -190,26 +190,26 @@ export abstract class Signer {
 
     const res = typeof response == 'string' ? { error: null, result: `${response}`.slice(2, 132) } : response;
 
-    if (res?.error) {
+    if (res.error) {
       throw new Error((res.error as unknown as { message: string }).message);
     }
 
     const kL2KeyHashProd = '0x3978602b67f89ae820dcc57869dfab215c0a48f7510d95baef4cef262ad38350';
     const kL2KeyHashTestnet = '0x0be1ca974483d76bfb1b0b934b192f880e1e64c4872bfe471402337a70736366';
 
-    const kL2KeyHash = env?.isProd ? kL2KeyHashProd : kL2KeyHashTestnet;
+    const kL2KeyHash = env.isProd ? kL2KeyHashProd : kL2KeyHashTestnet;
 
     const bytes = ethers.utils.toUtf8Bytes(message);
     const personalSignMessageHash = ethers.utils.sha256(bytes);
 
     if (
-      !provider?.isParticleNetwork &&
-      !provider?.isBybit &&
+      !provider.isParticleNetwork &&
+      !provider.isBybit &&
       !ethers.BigNumber.from(personalSignMessageHash).eq(kL2KeyHash)
     ) {
       throw new Error('personal_sign content hash mismatch');
     }
     // Note: Using createTypedSignature() fixes the signature `v` value.
-    return { value: createTypedSignature(res?.result, SignatureTypes.PERSONAL), l2KeyHash: personalSignMessageHash };
+    return { value: createTypedSignature(res.result, SignatureTypes.PERSONAL), l2KeyHash: personalSignMessageHash };
   }
 }
