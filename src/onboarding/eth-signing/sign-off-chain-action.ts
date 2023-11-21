@@ -191,10 +191,10 @@ export abstract class SignOffChainAction<M extends {}> extends Signer {
     return json
       .replace('{\n', '')
       .replace('\n}', '')
-      .replaceAll(/"/g, '')
-      .replaceAll(/\s+/g, '')
-      .replaceAll(':', `: `)
-      .replaceAll(',', `\n`)
+      .replace(/"/g, '')
+      .replace(/\s+/g, '')
+      .replace(/:/g, `: `)
+      .replace(/,/g, `\n`)
       .replace('L2Key', 'L2 Key')
       .replace('https: //', 'https://');
   }
