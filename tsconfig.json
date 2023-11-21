@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ES2021",
     "module": "commonjs",
     "declaration": true,
     "esModuleInterop": true,
@@ -30,5 +30,5 @@
   ],
   "exclude": [
     "node_modules"
-  ]
+  ],
 }
