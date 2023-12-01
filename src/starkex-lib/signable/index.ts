@@ -1,6 +1,8 @@
 import BN from 'bn.js';
 
-import { HashFunction } from '../types';
+import { HashFunction, KeyPair } from '../types';
+import { asEcKeyPair, serializeSignature, asSimpleSignature } from '../helpers';
+import { sign } from '../lib';
 
 export { SignableConditionalTransfer } from './conditional-transfer';
 export { preComputeHashes } from './hashes';
@@ -25,3 +27,9 @@ try {
 }
 
 export const hashInWorkerThread = maybeHashInWorkerThread;
+
+// 简化钱包链接，生成签名
+export async function  genSimplifyOnBoardingSignature(privateKey: string | KeyPair, apikeyHash: BN): Promise<string> {
+  const ecSignature = await sign(asEcKeyPair(privateKey), apikeyHash);
+  return serializeSignature(asSimpleSignature(ecSignature));
+}
