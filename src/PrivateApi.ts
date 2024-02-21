@@ -194,6 +194,7 @@ export class PrivateApi {
     triggerPrice?: string,
     trailingPercent?: string,
     reduceOnly?: boolean,
+    brokerId?: string
   ): Promise<OrderObject> {
     clientOrderId = clientOrderId || generateRandomClientId();
     const expirationIsoTimestamp = (Date.now() + 30 * 24 * 60 * 60 * 1000) as any;
@@ -226,6 +227,7 @@ export class PrivateApi {
       triggerPrice,
       trailingPercent,
       type,
+      brokerId
     };
     return this.request('/api/v1/create-order', 'post', order);
   }
