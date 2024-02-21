@@ -131,6 +131,7 @@ export interface CreateOrderOptionsObject {
   triggerPrice?: string;
   trailingPercent?: string;
   reduceOnly?: boolean;
+  brokerId?: string;
 }
 
 export interface FundingRateObject {
