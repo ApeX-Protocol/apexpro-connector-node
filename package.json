@@ -35,7 +35,7 @@
     "chai": "^4.2.0",
     "es6-promisify": "^7.0.0",
     "hardhat": "^2.6.5",
-    "mocha": "^8.1.0",
+    "mocha": "10.1.0",
     "prettier": "^2.5.1",
     "rimraf": "^2.6.3",
     "ts-node": "^10.4.0",
@@ -65,10 +65,15 @@
   },
   "mocha": {
     "timeout": 120000,
-    "require": [
-      "ts-node/register",
-      "tsconfig-paths/register"
-    ],
-    "ui": "bdd"
+    "require": "ts-node/register",
+    "recursive": true,
+    "exit": true,
+    "reporter": "mochawesome",
+    "reporterOptions": {
+      "reportDir": "test-report",
+      "reportFilename": "apexpro-connector-node"
+    },
+    "extension": "ts",
+    "spec": "test/**/*.spec.ts"
   }
 }
