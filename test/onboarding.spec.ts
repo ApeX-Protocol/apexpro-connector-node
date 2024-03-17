@@ -1,4 +1,4 @@
-import { ENV, createStartKey, onboardingAccount, web3 } from '../src';
+import { ENV, Trace, createStartKey, onboardingAccount, web3 } from '../src';
 
 const useProd = false
 const privateKey = '42b81f4a8becf2ca03ec734c002c69d7150989a00cbb00b439d9af782545451a';
@@ -16,7 +16,7 @@ describe('Onboarding Example', () => {
       privateKey,
       rpcUrl: 'https://ethereum-goerli.publicnode.com',
     });
-    console.log('v2', v2);
+    Trace.print(v2);
   });
 
   it('Onboarding USDT', async () => {
@@ -26,12 +26,13 @@ describe('Onboarding Example', () => {
       rpcUrl: 'https://ethereum-goerli.publicnode.com',
       token: 'USDT'
     });
-    console.log('v2', v2);
+    Trace.print(v2);
   });
 
   it('Create StarkKey', async () => {
     const signer = await web3.eth.accounts.wallet.add(privateKey);
-    const v2 = await createStartKey(signer, env, 'USDC', 'https://ethereum-goerli.publicnode.com');
+    const keyPair = await createStartKey(signer, env, 'USDC', 'https://ethereum-goerli.publicnode.com');
+    Trace.print(keyPair);
   });
 
 
