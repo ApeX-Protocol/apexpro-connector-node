@@ -11,12 +11,13 @@ import {
   Trace,
 } from '../src';
 import BigNumber from 'bignumber.js';
+import { getPerpetual, setPerpetual } from '../src/starkex-lib';
 
 describe('Private Api Example', () => {
   let apexClient: ApexClient;
 
   before(async () => {
-    apexClient = new ApexClient(PROD);
+    apexClient = new ApexClient(QA);
     const apiKeyCredentials: ApiKeyCredentials = {
       key: 'api key',
       passphrase: ' passphrase ',
@@ -25,6 +26,8 @@ describe('Private Api Example', () => {
     const startPrivateKey: string = 'startPrivateKey';
     const accountId: string = 'your account id';
     await apexClient.init(apiKeyCredentials, startPrivateKey, accountId);
+    // setup perpetual USDC or USDT before trading.
+    setPerpetual('USDT');
   });
 
   it('GET Retrieve User Data', async () => {
@@ -37,27 +40,39 @@ describe('Private Api Example', () => {
     const accountInfo = await apexClient.privateApi.getAccount(apexClient.clientConfig.accountId, user.ethereumAddress);
     Trace.print(accountInfo);
   });
+
+  // update v2
   it('GET Trade History', async () => {
-    const { orders } = await apexClient.privateApi.tradeHistory('BTC-USDC', 'OPEN');
+    const currentPerpetual = getPerpetual()?.toUpperCase()
+    const { orders } = await apexClient.privateApi.tradeHistory(currentPerpetual as 'USDC' | 'USDT', `BTC-${currentPerpetual}`, 'OPEN');
     Trace.print(orders);
   });
+
+  // update v2
   it('GET Worst Price', async () => {
-    const price = await apexClient.privateApi.getWorstPrice('BTC-USDC', '0.01', 'BUY');
+    const currentPerpetual = getPerpetual()?.toUpperCase()
+    const price = await apexClient.privateApi.getWorstPrice(`BTC-${currentPerpetual}`, '0.01', 'BUY');
+    // const price = await apexClient.privateApi.getWorstPrice('BTC-USDT', '0.01', 'BUY');
     Trace.print(price);
   });
 
+  // update v2
   it('POST Creating Orders', async () => {
-    const symbol = 'BTC-USDC';
+    const currentPerpetual = getPerpetual()?.toUpperCase()
+    const symbol = `BTC-${currentPerpetual}`;
+    // const symbol = 'BTC-USDT';
     const price = '24046.0';
     const size = '0.01';
 
     const baseCoinRealPrecision = apexClient.symbols[symbol].baseCoinRealPrecision;
-    const takerFeeRate = apexClient.account.takerFeeRate;
+    const takerFeeRate = apexClient?.account?.accounts?.find(i=>i?.token === getPerpetual())?.takerFeeRate;
 
     const limitFee = new BigNumber(price)
-      .multipliedBy(takerFeeRate)
+      .multipliedBy(takerFeeRate || '0')
       .multipliedBy(size)
       .toFixed(baseCoinRealPrecision, BigNumber.ROUND_UP);
+
+      console.log('limitFee', limitFee)
 
     const apiOrder = {
       limitFee,
@@ -90,54 +105,74 @@ describe('Private Api Example', () => {
     );
     Trace.print(result);
   });
+
+  // update v2
+  it('GET Open Orders', async () => {
+    const currentPerpetual = getPerpetual()?.toUpperCase()
+    const { orders } = await apexClient.privateApi.openOrders(currentPerpetual as 'USDC' | 'USDT');
+    Trace.print(orders);
+  });
+
+  // update v2
+  it('POST Cancel all Open Orders', async () => {
+    const currentPerpetual = getPerpetual()?.toUpperCase()
+    const symbol = `BTC-${currentPerpetual}`;
+    // const symbol = 'BTC-USDT';
+    await apexClient.privateApi.cancelAllOrder(currentPerpetual as 'USDC' | 'USDT', symbol);
+  });
+
+  // update v2
+  it('GET All Order History', async () => {
+    const currentPerpetual = getPerpetual()?.toUpperCase()
+    const { orders } = await apexClient.privateApi.historyOrders(currentPerpetual as 'USDC' | 'USDT');
+    Trace.print(orders);
+  });
+
+  // update v2
+  it('GET Order ID', async () => {
+    const orderId = '557260254170054997';
+    const order = await apexClient.privateApi.getOrder(orderId);
+    Trace.print(order);
+  });
+
+  // update v2
   it('POST Cancel Order', async () => {
-    const orderId = '423869956023648568';
+    const orderId = '557260254170054997';
     const result = await apexClient.privateApi.cancelOrder(orderId);
     Trace.print(result);
   });
 
+  // update v2
   it('POST Cancel Order By ClientOrderId', async () => {
     const clientOrderId = '3773562820849392';
     const result = await apexClient.privateApi.cancelOrderByClientOrderId(clientOrderId);
     Trace.print(result);
   });
 
-  it('GET Open Orders', async () => {
-    const { orders } = await apexClient.privateApi.openOrders();
-    Trace.print(orders);
-  });
-
-  it('POST Cancel all Open Orders', async () => {
-    const symbol = 'BTC-USDC';
-    await apexClient.privateApi.cancelAllOrder(symbol);
-  });
-
-  it('GET All Order History', async () => {
-    const { orders } = await apexClient.privateApi.historyOrders();
-    Trace.print(orders);
-  });
-  it('GET Order ID', async () => {
-    const orderId = '423869956023648568';
-    const order = await apexClient.privateApi.getOrder(orderId);
-    Trace.print(order);
-  });
   it('GET Order by clientOrderId', async () => {
     const orderId = '3773562820849392';
     const order = await apexClient.privateApi.getOrderByClientOrderId(orderId);
     Trace.print(order);
   });
 
+  // update v2
   it('GET Funding Rate', async () => {
-    const { fundingValues, totalSize } = await apexClient.privateApi.fundingRate();
+    const currentPerpetual = getPerpetual()?.toUpperCase()
+    const { fundingValues, totalSize } = await apexClient.privateApi.fundingRate(currentPerpetual as 'USDC' | 'USDT');
     Trace.print(fundingValues, totalSize);
   });
 
+  // update v2
   it('GET User Historial Profit and Loss', async () => {
-    const { historicalPnl, totalSize } = await apexClient.privateApi.historicalPNL();
+    const currentPerpetual = getPerpetual()?.toUpperCase()
+    const { historicalPnl, totalSize } = await apexClient.privateApi.historicalPNL(currentPerpetual as 'USDC' | 'USDT');
     Trace.print(historicalPnl, totalSize);
   });
+
+  // update v2
   it("GET Yesterday's Profit & Loss", async () => {
-    const yesterdayPNL = await apexClient.privateApi.yesterdayPNL();
+    const currentPerpetual = getPerpetual()?.toUpperCase()
+    const yesterdayPNL = await apexClient.privateApi.yesterdayPNL(currentPerpetual as 'USDC' | 'USDT');
     Trace.print(yesterdayPNL);
   });
 

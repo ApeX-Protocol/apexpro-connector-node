@@ -3,6 +3,7 @@ import { ClientConfig, ENV, PROD } from './Constant';
 import { asEcKeyPair, asSimpleKeyPair, setConfig, setCurrency, setSymbols } from './starkex-lib';
 import {
   AccountObject,
+  AccountsItem,
   ApiKeyCredentials,
   ApiTool,
   Clock,
@@ -10,11 +11,40 @@ import {
   getPrecision,
   KeyPair,
   PerpetualContractObject,
+  PerpetualCurrencyObject,
   SymbolInfoObject,
   UserObject,
 } from './apexpro';
 import { PublicApi } from './PublicApi';
 import { PrivateApi } from './PrivateApi';
+
+const genSymbolInfo = (groupSymbols, currency, symbols)=>{
+  if (groupSymbols.length) {
+    groupSymbols.forEach((obj: PerpetualContractObject, idx: number) => {
+      const symbolInfo: SymbolInfoObject = {
+        ...obj,
+      };
+      symbolInfo.rankIdx = idx;
+      symbolInfo.pricePrecision = getPrecision(obj.tickSize);
+      symbolInfo.priceStep = Number(obj.tickSize);
+      symbolInfo.sizePrecision = getPrecision(obj.stepSize);
+      symbolInfo.sizeStep = Number(obj.stepSize);
+      symbolInfo.baseCoin = obj.settleCurrencyId;
+      symbolInfo.currentCoin = obj.underlyingCurrencyId;
+      const baseCoinInfo: CurrencyObject =
+        currency.find((item: CurrencyObject) => item.id === symbolInfo.baseCoin) || ({} as CurrencyObject);
+      const currentCoinInfo: CurrencyObject =
+        currency.find((item: CurrencyObject) => item.id === symbolInfo.currentCoin) || ({} as CurrencyObject);
+      symbolInfo.baseCoinPrecision = Math.abs(Math.log10(Number(baseCoinInfo.showStep) || 1));
+      symbolInfo.baseCoinRealPrecision = Math.abs(Math.log10(Number(baseCoinInfo.stepSize) || 1));
+      symbolInfo.currentCoinPrecision = Math.abs(Math.log10(Number(currentCoinInfo.stepSize) || 1));
+      symbolInfo.baseCoinIcon = baseCoinInfo.iconUrl;
+      symbolInfo.currentCoinIcon = currentCoinInfo.iconUrl;
+      symbols[obj.symbol] = symbolInfo;
+    });
+  }
+
+}
 
 export class ApexClient {
   apiTool: ApiTool;
@@ -25,7 +55,7 @@ export class ApexClient {
   user: UserObject;
   account: AccountObject;
   symbols: { [key: string]: SymbolInfoObject };
-  currency: CurrencyObject[];
+  currency: PerpetualCurrencyObject;
 
   constructor(env: ENV = PROD) {
     this.apiTool = new ApiTool(env);
@@ -55,6 +85,7 @@ export class ApexClient {
 
   private async initConfig() {
     this.user = await this.privateApi.user();
+    // update v2
     this.account = await this.privateApi.getAccount(this.clientConfig.accountId, this.user.ethereumAddress);
     this.checkAccountId();
     this.checkStarkKey();
@@ -63,39 +94,37 @@ export class ApexClient {
 
   private async initSymbol() {
     const symbols: { [key: string]: PerpetualContractObject } = {};
-    const { perpetualContract: groupSymbols = [], currency, multiChain, global } = await this.publicApi.symbols();
-    if (groupSymbols.length) {
-      groupSymbols.forEach((obj: PerpetualContractObject, idx: number) => {
-        const symbolInfo: SymbolInfoObject = {
-          ...obj,
-        };
-        symbolInfo.rankIdx = idx;
-        symbolInfo.pricePrecision = getPrecision(obj.tickSize);
-        symbolInfo.priceStep = Number(obj.tickSize);
-        symbolInfo.sizePrecision = getPrecision(obj.stepSize);
-        symbolInfo.sizeStep = Number(obj.stepSize);
-        symbolInfo.baseCoin = obj.settleCurrencyId;
-        symbolInfo.currentCoin = obj.underlyingCurrencyId;
-        const baseCoinInfo: CurrencyObject =
-          currency.find((item: CurrencyObject) => item.id === symbolInfo.baseCoin) || ({} as CurrencyObject);
-        const currentCoinInfo: CurrencyObject =
-          currency.find((item: CurrencyObject) => item.id === symbolInfo.currentCoin) || ({} as CurrencyObject);
-        symbolInfo.baseCoinPrecision = Math.abs(Math.log10(Number(baseCoinInfo.showStep) || 1));
-        symbolInfo.baseCoinRealPrecision = Math.abs(Math.log10(Number(baseCoinInfo.stepSize) || 1));
-        symbolInfo.currentCoinPrecision = Math.abs(Math.log10(Number(currentCoinInfo.stepSize) || 1));
-        symbolInfo.baseCoinIcon = baseCoinInfo.iconUrl;
-        symbolInfo.currentCoinIcon = currentCoinInfo.iconUrl;
-        symbols[obj.symbol] = symbolInfo;
-      });
+    // update v2
+    const { usdcConfig, usdtConfig } = await this.publicApi.symbols();
+
+    const { perpetualContract: usdcGroupSymbols = [], currency: usdcCurrency, multiChain: usdcMultichain, global: usdcGlobal } = usdcConfig;
+    const { perpetualContract: usdtGroupSymbols = [], currency: usdtCurrency, multiChain: usdtMultichain, global: usdtGlobal } = usdtConfig;
+
+    if (usdcGroupSymbols.length) {
+      genSymbolInfo(usdcGroupSymbols, usdcCurrency, symbols)
     }
+
+    if (usdcGroupSymbols.length) {
+      genSymbolInfo(usdtGroupSymbols, usdtCurrency, symbols)
+    }
+
     this.symbols = symbols;
-    this.currency = currency;
+    this.currency = {
+      usdc: usdcCurrency,
+      usdt: usdtCurrency
+    };
     setSymbols(symbols);
-    setCurrency(currency);
+    setCurrency({ usdc: usdcCurrency, usdt: usdtCurrency });
     setConfig({
-      multiChain,
-      global,
-      currency,
+      usdc: {
+        multichain: usdcMultichain,
+        global: usdcGlobal,
+        currency: usdcCurrency,
+      } , usdt: {
+        multichain: usdtMultichain,
+        global: usdtGlobal,
+        currency: usdtCurrency,
+      }
     });
   }
 
@@ -110,10 +139,14 @@ export class ApexClient {
     if (!accountStarkPublicKey.startsWith('0x')) {
       accountStarkPublicKey = '0x' + accountStarkPublicKey;
     }
+
+    console.log('this.clientConfig', this.clientConfig)
     let publicKey = this.clientConfig.starkKeyPair.publicKey;
     if (!publicKey.startsWith('0x')) {
       publicKey = '0x' + publicKey;
     }
+
+    console.log('accountStarkPublicKey', accountStarkPublicKey, publicKey)
     if (accountStarkPublicKey.toLowerCase() !== publicKey.toLowerCase()) {
       throw new Error('Stark Key is not match, please check your stark private key.');
     }

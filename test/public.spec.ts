@@ -5,9 +5,9 @@ describe('Public Api Example', () => {
 
   before(async () => {
     // init prod client
-    apexClient = new ApexClient(PROD);
+    // apexClient = new ApexClient(PROD);
     // init qa
-    // apexClient = new ApexClient(QA);
+    apexClient = new ApexClient(QA);
   });
 
   it('GET System Time', async () => {
@@ -41,8 +41,10 @@ describe('Public Api Example', () => {
     Trace.print(tickers);
   });
 
+  // update v2
   it('GET Funding Rate History', async () => {
     const historyFunding = await apexClient.publicApi.historyFunding('BTC-USDC');
+    // const historyFunding = await apexClient.publicApi.historyFunding('BTC-USDT');
     Trace.print(historyFunding);
   });
 

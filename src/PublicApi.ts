@@ -4,6 +4,7 @@ import {
   GetHistoryFundingOptions,
   HistoryFundingObject,
   KlineObject,
+  PerpetualObject,
   SymbolObject,
   TickerObject,
   TradeObject,
@@ -28,8 +29,8 @@ export class PublicApi {
    * GET All Config Data
    * @see https://api-docs.pro.apex.exchange/#publicapi-get-all-config-data
    */
-  async symbols(): Promise<SymbolObject> {
-    return this.apiTool.apiRequest('/api/v1/symbols', 'get');
+  async symbols(): Promise<PerpetualObject> {
+    return this.apiTool.apiRequest('/api/v2/symbols', 'get');
   }
 
   /**
@@ -109,7 +110,7 @@ export class PublicApi {
     endTimeExclusive?: number,
     page?: number,
   ): Promise<HistoryFundingObject[]> {
-    return this.apiTool.apiRequest('/api/v1/history-funding', 'get', {
+    return this.apiTool.apiRequest('/api/v2/history-funding', 'get', {
       symbol,
       page,
       beginTimeInclusive,

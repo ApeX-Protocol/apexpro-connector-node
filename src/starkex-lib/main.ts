@@ -167,6 +167,15 @@ interface Currency {
   step_size: string;
 }
 
+// 合约对信息
+let perpetual: 'USDC' | 'USDT' | string = '';
+const setPerpetual = (data: 'USDC' | 'USDT') => {
+  perpetual = data;
+};
+const getPerpetual = (): 'USDC' | 'USDT' | string => {
+  return perpetual;
+};
+
 // 币对信息
 let symbols: any = [];
 
@@ -176,20 +185,72 @@ const setSymbols = (data: any) => {
 const getSymbols = () => {
   return symbols;
 };
+
 // 价值信息
-let currency: Currency[] = [];
+let currency: { usdc: Currency[]; usdt: Currency[] } = { usdc: [], usdt: [] };
+
+const setUSDCCurrency = (data: any) => {
+  currency.usdc = data;
+};
+const getUSDCCurrency = () => {
+  return currency?.usdc;
+};
+const setUSDTCurrency = (data: any) => {
+  currency.usdt = data;
+};
+const getUSDTCurrency = () => {
+  return currency?.usdt;
+};
 const setCurrency = (data: any) => {
   currency = data;
 };
 const getCurrency = () => {
+  const currentPerpetual = getPerpetual()?.toLowerCase?.();
+  if (currentPerpetual) {
+    return currency?.[currentPerpetual];
+  }
   return currency;
 };
+
 // config
-let config = {};
+let config = { usdc: {}, usdt: {} };
+const setUSDCConfig = (data) => {
+  config.usdc = data;
+};
+const getUSDCConfig = () => {
+  return config?.usdc;
+};
+const setUSDTConfig = (data) => {
+  config.usdt = data;
+};
+const getUSDTConfig = () => {
+  return config?.usdt;
+};
 const setConfig = (data: any) => {
   config = data;
 };
 const getConfig = () => {
+  const currentPerpetual = getPerpetual()?.toLowerCase?.();
+  if (currentPerpetual) {
+    return config?.[currentPerpetual];
+  }
   return config;
 };
-export { setSymbols, getSymbols, setCurrency, getCurrency, setConfig, getConfig };
+export {
+  setUSDCConfig,
+  getUSDCConfig,
+  setUSDTConfig,
+  getUSDTConfig,
+  setUSDCCurrency,
+  getUSDCCurrency,
+  setUSDTCurrency,
+  getUSDTCurrency,
+  setPerpetual,
+  getPerpetual,
+  setSymbols,
+  getSymbols,
+  setCurrency,
+  getCurrency,
+  setConfig,
+  getConfig,
+};

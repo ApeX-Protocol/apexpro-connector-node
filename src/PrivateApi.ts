@@ -110,7 +110,7 @@ export class PrivateApi {
    * @returns promise
    */
   async getAccount(id: string, ethereumAddress: string): Promise<AccountObject> {
-    return this.request('/api/v1/account', 'get', {
+    return this.request('/api/v2/account', 'get', {
       id,
       ethereumAddress,
     });
@@ -119,6 +119,7 @@ export class PrivateApi {
   /**
    * GET Trade History
    * @see https://api-docs.pro.apex.exchange/#privateapi-get-trade-history
+   * @param token 'USDC' | 'USDT'
    * @param symbol
    * @param status
    * @param side 'BUY' | 'SELL'
@@ -129,6 +130,7 @@ export class PrivateApi {
    * @param orderType "ACTIVE","CONDITION","HISTORY"
    */
   async tradeHistory(
+    token: 'USDC' | 'USDT',
     symbol?: string,
     status?: 'PENDING' | 'OPEN' | 'FILLED' | 'CANCELED' | 'EXPIRED' | 'UNTRIGGERED',
     side?: 'BUY' | 'SELL',
@@ -138,7 +140,8 @@ export class PrivateApi {
     page?: number,
     orderType?: 'ACTIVE' | 'CONDITION' | 'HISTORY',
   ): Promise<{ orders: OrderObject[] }> {
-    return this.request('/api/v1/fills', 'get', {
+    return this.request('/api/v2/fills', 'get', {
+      token,
       symbol,
       status,
       side,
@@ -158,7 +161,7 @@ export class PrivateApi {
    * @param side BUY or SELL order
    */
   async getWorstPrice(symbol: string, size: string, side: 'BUY' | 'SELL'): Promise<WorstPriceObject> {
-    return this.request('/api/v1/get-worst-price', 'get', {
+    return this.request('/api/v2/get-worst-price', 'get', {
       symbol,
       size,
       side,
@@ -229,7 +232,7 @@ export class PrivateApi {
       type,
       brokerId
     };
-    return this.request('/api/v1/create-order', 'post', order);
+    return this.request('/api/v2/create-order', 'post', order);
   }
 
   /**
@@ -238,7 +241,7 @@ export class PrivateApi {
    * @param id of the order being canceled
    */
   async cancelOrder(id: string): Promise<number> {
-    return this.request('/api/v1/delete-order', 'post', {
+    return this.request('/api/v2/delete-order', 'post', {
       id,
     });
   }
@@ -249,7 +252,7 @@ export class PrivateApi {
    * @param id of the order being canceled
    */
   async cancelOrderByClientOrderId(id: string): Promise<number> {
-    return this.request('/api/v1/delete-client-order-id', 'post', {
+    return this.request('/api/v2/delete-client-order-id', 'post', {
       id,
     });
   }
@@ -259,8 +262,9 @@ export class PrivateApi {
    * @see https://api-docs.pro.apex.exchange/#privateapi-post-cancel-all-open-orders
    * @param symbol "BTC-USDC,ETH-USDC", Cancel all orders if none
    */
-  async cancelAllOrder(symbol?: string): Promise<void> {
-    return this.request('/api/v1/delete-open-orders', 'post', {
+  async cancelAllOrder(token: 'USDC' | 'USDT', symbol?: string): Promise<void> {
+    return this.request('/api/v2/delete-open-orders', 'post', {
+      token,
       symbol,
     });
   }
@@ -269,8 +273,8 @@ export class PrivateApi {
    * GET Open Orders
    * @see https://api-docs.pro.apex.exchange/#privateapi-get-open-orders
    */
-  async openOrders(): Promise<{ orders: OrderObject[] }> {
-    return this.request('/api/v1/open-orders', 'get', {});
+  async openOrders(token: 'USDC' | 'USDT'): Promise<{ orders: OrderObject[] }> {
+    return this.request('/api/v1/open-orders', 'get', { token });
   }
 
   /**
@@ -279,7 +283,7 @@ export class PrivateApi {
    * @param id
    */
   async getOrder(id: string): Promise<OrderObject> {
-    return this.request('/api/v1/get-order', 'get', { id });
+    return this.request('/api/v2/get-order', 'get', { id });
   }
 
   /**
@@ -304,6 +308,7 @@ export class PrivateApi {
    * @param orderType "ACTIVE","CONDITION","HISTORY"
    */
   async historyOrders(
+    token: 'USDC' | 'USDT',
     symbol?: string,
     status?: 'PENDING' | 'OPEN' | 'FILLED' | 'CANCELED' | 'EXPIRED' | 'UNTRIGGERED',
     side?: 'BUY' | 'SELL',
@@ -313,7 +318,8 @@ export class PrivateApi {
     page?: number,
     orderType?: 'ACTIVE' | 'CONDITION' | 'HISTORY',
   ): Promise<{ orders: OrderObject[]; totalSize: number }> {
-    return this.request('/api/v1/history-orders', 'get', {
+    return this.request('/api/v2/history-orders', 'get', {
+      token,
       symbol,
       status,
       side,
@@ -337,6 +343,7 @@ export class PrivateApi {
    * @param status
    */
   async fundingRate(
+    token: 'USDC' | 'USDT',
     symbol?: string,
     limit?: number,
     page?: number,
@@ -345,7 +352,8 @@ export class PrivateApi {
     side?: 'BUY' | 'SELL',
     status?: 'PENDING' | 'OPEN' | 'FILLED' | 'CANCELED' | 'EXPIRED' | 'UNTRIGGERED',
   ): Promise<{ fundingValues: FundingRateObject[]; totalSize: number }> {
-    return this.request('/api/v1/funding', 'get', {
+    return this.request('/api/v2/funding', 'get', {
+      token,
       symbol,
       limit,
       page,
@@ -367,6 +375,7 @@ export class PrivateApi {
    * @param limit Default at 100
    */
   async historicalPNL(
+    token: 'USDC' | 'USDT',
     beginTimeInclusive?: number,
     endTimeExclusive?: number,
     type?: number,
@@ -374,7 +383,8 @@ export class PrivateApi {
     page?: number,
     limit?: number,
   ): Promise<{ historicalPnl: HistoricalPNLObject[]; totalSize: number }> {
-    return this.request('/api/v1/historical-pnl', 'get', {
+    return this.request('/api/v2/historical-pnl', 'get', {
+      token,
       beginTimeInclusive,
       endTimeExclusive,
       type,
@@ -388,8 +398,8 @@ export class PrivateApi {
    * GET Yesterday's Profit & Loss
    * @see https://api-docs.pro.apex.exchange/#privateapi-get-yesterday-39-s-profit-amp-loss
    */
-  async yesterdayPNL(): Promise<string> {
-    return this.request('/api/v1/yesterday-pnl', 'get', {});
+  async yesterdayPNL(token: 'USDC' | 'USDT'): Promise<string> {
+    return this.request('/api/v2/yesterday-pnl', 'get', { token });
   }
 
   /**
@@ -399,7 +409,7 @@ export class PrivateApi {
    * @param initialMarginRate
    */
   async setInitialMarginRate(symbol: string, initialMarginRate: string): Promise<void> {
-    return this.request('/api/v1/set-initial-margin-rate', 'post', {
+    return this.request('/api/v2/set-initial-margin-rate', 'post', {
       symbol,
       initialMarginRate,
     });
@@ -409,6 +419,6 @@ export class PrivateApi {
    * GET Account Balance
    */
   async accountBalance(): Promise<AccountBalanceObject> {
-    return this.request('/api/v1/account-balance', 'get', {});
+    return this.request('/api/v2/account-balance', 'get', {});
   }
 }

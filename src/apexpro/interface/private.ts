@@ -58,6 +58,15 @@ export interface OpenPositionObject {
   customInitialMarginRate: string;
 }
 
+export interface AccountsItem {
+  createdAt: number,
+  takerFeeRate: string,
+  makerFeeRate: string,
+  minInitialMarginRate: string,
+  status: string,
+  token: string,
+  unrealizePnlPriceType: string
+}
 export interface AccountObject {
   starkKey: string;
   positionId: string;
@@ -73,6 +82,7 @@ export interface AccountObject {
   makerFeeRate: string;
   wallets: WalletObject[];
   openPositions: OpenPositionObject[];
+  accounts?: AccountsItem[];
 }
 
 export interface OrderObject {

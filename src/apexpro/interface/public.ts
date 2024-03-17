@@ -32,6 +32,10 @@ export interface GetHistoryFundingOptions {
   limit?: number;
 }
 
+export interface PerpetualCurrencyObject{
+  usdc: CurrencyObject[],
+  usdt: CurrencyObject[]
+}
 export interface CurrencyObject {
   id: string;
   starkExAssetId: string;
@@ -105,6 +109,11 @@ export interface MultiChainObject {
   maxWithdraw: string;
   minDeposit: string;
   minWithdraw: string;
+}
+
+export interface PerpetualObject {
+  usdcConfig: SymbolObject;
+  usdtConfig: SymbolObject;
 }
 
 export interface SymbolObject {

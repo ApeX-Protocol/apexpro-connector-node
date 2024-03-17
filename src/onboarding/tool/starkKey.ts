@@ -43,21 +43,6 @@ const genStarkKey = async (
 };
 
 const genNonce = async (address: string, publicKey: string, env: ENV, params: { [key: string]: any } = {}) => {
-  // const tempRes = await fetch(`${env.url}/api/v1/generate-nonce`, {
-  //   "headers": {
-  //     "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-  //   },
-  //   "body": QueryString.stringify({
-  //     ethAddress: address,
-  //     starkKey: publicKey,
-  //     chainId: params.chainId,
-  //     ...params,
-  //   }),
-  //   "method": "POST",
-  //   "mode": "cors",
-  // });
-  // const res = await tempRes.json()
-
   const qrs = "?"+QueryString.stringify({
     ethAddress: address,
     starkKey: publicKey,
@@ -70,23 +55,6 @@ const genNonce = async (address: string, publicKey: string, env: ENV, params: { 
       'Content-Type': "application/x-www-form-urlencoded; charset=UTF-8"
     }
   })
-
-
-
-  // const res = await axios.post(
-  //   `${envUrl}/api/v1/generate-nonce`,
-  //   {
-  //     ethAddress: address,
-  //     starkKey: publicKey,
-  //     chainId: params.chainId,
-  //     // ...params,
-  //   },
-  //   {
-  //     headers: {
-  //       'Content-Type': 'x-www-form-urlencoded',
-  //     },
-  //   },
-  // );
 
   return res.data;
 };
@@ -145,34 +113,12 @@ const basicOnboarding = async (
   };
   const signature = await signer.sign(account, signingMethod, message, env);
 
-  // const tempRes = await fetch(`${env.url}/api/v2/onboarding`, {
-  //   "headers": {
-  //     "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-      // 'APEX-SIGNATURE': typeof signature === 'string' ? signature : signature.value,
-      // 'Apex-Ethereum-Address': account
-  //   },
-    // "body": QueryString.stringify({
-    //   starkKey: keyPair.publicKey,
-    //   starkKeyYCoordinate: keyPair.publicKeyYCoordinate,
-    //   ethereumAddress: account,
-    //   token: token || 'USDC',
-    // }),
-  //   "method": "POST",
-  //   "mode": "cors",
-  // });
-  // const res = await tempRes.json()
-
-
-
-
   const qrs = "?"+QueryString.stringify({
     starkKey: keyPair.publicKey,
     starkKeyYCoordinate: keyPair.publicKeyYCoordinate,
     ethereumAddress: account,
     token: token || 'USDC',
   })
-
-
 
   const res = await axios.post(`${env.url}/api/v2/onboarding${qrs}`, {}, {
     headers: {
@@ -183,22 +129,6 @@ const basicOnboarding = async (
   })
 
   return res
-
-  // return axios.post(
-  //   `${envUrl}/api/v2/onboarding`,
-  //   {
-  //     starkKey: keyPair.publicKey,
-  //     starkKeyYCoordinate: keyPair.publicKeyYCoordinate,
-  //     ethereumAddress: account,
-  //     token: token || 'USDC',
-  //   },
-  //   {
-  //     headers: {
-  //       'APEX-SIGNATURE': typeof signature === 'string' ? signature : signature.value,
-  //       'Apex-Ethereum-Address': account
-  //     },
-  //   },
-  // );
 };
 
 const simplifyOnboarding = async (
@@ -225,24 +155,6 @@ const simplifyOnboarding = async (
     nonce,
   });
 
-  // const tempRes = await fetch(`${env.url}/api/v2/onboarding`, {
-  //   "headers": {
-  //     "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-      // 'APEX-SIGNATURE': simplifySignature,
-      // 'Apex-Ethereum-Address': account
-  //   },
-  //   "body": QueryString.stringify({
-  //     starkKey: keyPair.publicKey,
-  //     starkKeyYCoordinate: keyPair.publicKeyYCoordinate,
-  //     ethereumAddress: account,
-  //     token: token || 'USDC',
-  //   }),
-  //   "method": "POST",
-  //   "mode": "cors",
-  // });
-  // const res = await tempRes.json()
-
-
   const qrs = "?"+QueryString.stringify({
     starkKey: keyPair.publicKey,
     starkKeyYCoordinate: keyPair.publicKeyYCoordinate,
@@ -260,21 +172,6 @@ const simplifyOnboarding = async (
     }
   })
   return res
-
-  // return axios.post(
-  //   `${envUrl}/api/v2/onboarding`,
-  //   {
-  //     starkKey: keyPair.publicKey,
-  //     starkKeyYCoordinate: keyPair.publicKeyYCoordinate,
-  //     ethereumAddress: account,
-  //     token: token || 'USDC',
-  //   },
-  //   {
-  //     headers: {
-  //       'APEX-SIGNATURE': simplifySignature,
-  //     },
-  //   },
-  // );
 };
 
 export { basicOnboarding, simplifyOnboarding, genStarkKey, genNonce };
