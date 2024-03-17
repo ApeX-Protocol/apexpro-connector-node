@@ -121,7 +121,6 @@ export abstract class SignOffChainAction<M extends {}> extends Signer {
           data.types[this.domain].push({ type: 'string', name: 'nonce' });
         }
 
-        console.log('data', data);
         const signature = await this.ethSignTypedDataInternal(signer, data, signingMethod);
         return signature;
       }
@@ -133,11 +132,6 @@ export abstract class SignOffChainAction<M extends {}> extends Signer {
       }
       case SigningMethod.Personal2: {
         let messageString = this.getPersonalSignMessage(message);
-        // bybitwallet末尾手动添加0
-        // @ts-ignore
-        if (this.web3.currentProvider.isBybit) {
-          messageString += '0';
-        }
         // 生成starkKey 把chainId变更为envId
         const sig = this.ethSignPersonalInternal(signer, messageString.replace('chainId', 'envId'), env);
         return sig;

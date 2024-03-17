@@ -42,11 +42,7 @@ export abstract class Signer {
     let rpcMethod: string;
     let rpcData: {};
 
-    let provider = this.web3.currentProvider as AbstractProvider & {
-      isBybit?: boolean;
-      request?: any;
-      isParticleNetwork?: boolean;
-    };
+    let provider = this.web3.currentProvider as AbstractProvider & { request?: any };
     if (provider === null) {
       throw new Error('Cannot sign since Web3 currentProvider is null');
     }
@@ -68,7 +64,7 @@ export abstract class Signer {
         rpcData = JSON.stringify(data);
         break;
       case SigningMethod.MetaMaskLatest:
-        sendAsync = promisify(provider.sendAsync).bind(provider);
+        sendAsync = promisify(provider?.sendAsync || provider?.send).bind(provider);
         rpcMethod = 'eth_signTypedData_v4';
         rpcData = JSON.stringify(data);
         break;
@@ -81,25 +77,13 @@ export abstract class Signer {
         throw new Error(`Invalid signing method ${signingMethod}`);
     }
 
-    let response;
+    const response = await sendAsync({
+      method: rpcMethod,
+      params: [signer, rpcData],
+      jsonrpc: '2.0',
+      id: Date.now(),
+    });
 
-    if (provider.isParticleNetwork) {
-      response = await provider.request({
-        method: 'eth_signTypedData_v4_uniq',
-        params: [signer, rpcData],
-        jsonrpc: '2.0',
-        id: Date.now(),
-      });
-    } else {
-      response = await sendAsync({
-        method: rpcMethod,
-        params: [signer, rpcData],
-        jsonrpc: '2.0',
-        id: Date.now(),
-      });
-    }
-
-    console.log('response', response);
     const res = typeof response == 'string' ? { error: null, result: `${response}`.slice(2, 132) } : response;
     if (res.error) {
       throw new Error((res.error as unknown as { message: string }).message);
@@ -115,11 +99,7 @@ export abstract class Signer {
     message: string,
     env?: ENV
   ): Promise<{ value: string; l2KeyHash: string }> {
-    let provider = this.web3.currentProvider as AbstractProvider & {
-      isBybit?: boolean;
-      request?: any;
-      isParticleNetwork?: boolean;
-    };
+    let provider = this.web3.currentProvider as AbstractProvider & { request?: any };
 
     if (provider === null) {
       throw new Error('Cannot sign since Web3 currentProvider is null');
@@ -137,52 +117,27 @@ export abstract class Signer {
     let response;
 
     try {
-      if (provider.isParticleNetwork) {
-        // @ts-ignore
-        const signature = provider.auth.userInfo().signature;
-        if (!signature) {
-          response = await provider.request({
-            method: 'personal_sign_uniq',
-            params: [`ApeX Pro\naction: ApeX Pro Onboarding\nonlySignOn: https://pro.apex.exchange`, signer],
-            jsonrpc: '2.0',
-            id: Date.now(),
-          });
-        } else {
-          response = {
-            result: signature,
-          };
-        }
+      const msg = web3.utils.utf8ToHex(message);
+      // const r = await web3.eth.personal.sign(msg, web3.eth.accounts.wallet.[0].address, '')
+      if (web3.eth.accounts.wallet[0].privateKey) {
+        const tempRes = await web3.eth.accounts.sign(msg, web3.eth.accounts.wallet[0].privateKey);
+        response = tempRes.signature
       } else {
-        const msg = web3.utils.utf8ToHex(message);
-        // const r = await web3.eth.personal.sign(msg, web3.eth.accounts.wallet.[0].address, '')
-        if (web3.eth.accounts.wallet[0].privateKey) {
-          const tempRes = await web3.eth.accounts.sign(msg, web3.eth.accounts.wallet[0].privateKey);
-          response = tempRes.signature
-        } else {
-          response = await sendAsync({
-            method: rpcMethod,
-            params: [msg, signer],
-            jsonrpc: '2.0',
-            id: Date.now(),
-          });
-        }
+        response = await sendAsync({
+          method: rpcMethod,
+          params: [msg, signer],
+          jsonrpc: '2.0',
+          id: Date.now(),
+        });
       }
     } catch (e) {
       throw new Error('Invalid personal_sign');
-      console.log('error', e);
     }
 
     const signedMsg = response.result ? response.result : response;
     const verifiedAddress = ethers.utils.verifyMessage(message, signedMsg);
 
-    let ifValid = false;
-
-    if (provider.isParticleNetwork) {
-      // todo 验证
-      ifValid = true;
-    } else {
-      ifValid = verifiedAddress.toLowerCase() === signer.toLowerCase();
-    }
+    const ifValid = verifiedAddress.toLowerCase() === signer.toLowerCase();
 
     if (!ifValid) {
       throw new Error('Invalid signature');
@@ -203,8 +158,6 @@ export abstract class Signer {
     const personalSignMessageHash = ethers.utils.sha256(bytes);
 
     if (
-      !provider.isParticleNetwork &&
-      !provider.isBybit &&
       !ethers.BigNumber.from(personalSignMessageHash).eq(kL2KeyHash)
     ) {
       throw new Error('personal_sign content hash mismatch');
