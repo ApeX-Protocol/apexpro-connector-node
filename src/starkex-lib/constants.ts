@@ -3,7 +3,7 @@ import { keccak256 } from 'ethereum-cryptography/keccak';
 import _ from 'lodash';
 import { normalizeHex32 } from './lib';
 import { SyntheticAsset } from './types';
-import { getCurrency, ApexAsset } from './main';
+import { getCurrency, ApexAsset, getPerpetual, getCurrencyV2 } from './main';
 
 export const ALL_ASSETS = Object.values(ApexAsset);
 export const COLLATERAL_ASSET = ApexAsset.USDC;
@@ -54,10 +54,11 @@ export const ASSET_RESOLUTION: Record<ApexAsset, number> = {
 };
 
 export const COLLATERAL_ASSET_ID_BY_NETWORK_ID = () => {
-  const currency = getCurrency();
+  const currentPerpetual = getPerpetual()?.toUpperCase?.()
+  const currency = currentPerpetual ? getCurrencyV2() : getCurrency();
   let starkExAssetId = '';
   currency.map((item: any) => {
-    if (item.id == 'USDC') {
+    if (item.id == (currentPerpetual || 'USDC')) {
       starkExAssetId = item.starkExAssetId;
     }
   });

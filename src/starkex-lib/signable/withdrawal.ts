@@ -7,7 +7,7 @@ import { decToBn, hexToBn, intToBn } from '../lib/util';
 import { StarkwareWithdrawal, WithdrawalWithNonce, WithdrawalWithClientId, NetworkId } from '../types';
 import { WITHDRAWAL_FIELD_BIT_LENGTHS } from './constants';
 import { StarkSignable } from './stark-signable';
-import { getCurrency } from '../main';
+import { getCurrency, getCurrencyV2, getPerpetual } from '../main';
 
 const WITHDRAWAL_PREFIX = 7;
 const WITHDRAWAL_PADDING_BITS = 49;
@@ -46,7 +46,7 @@ export class SignableWithdrawal extends StarkSignable<StarkwareWithdrawal> {
 
     // The withdrawal asset is always the collateral asset.
     let quantumsAmount = toQuantumsExact(withdrawal.humanAmount, COLLATERAL_ASSET);
-    const currencys = getCurrency();
+    const currencys = getPerpetual() ? getCurrencyV2() : getCurrency();
     const currency_info: any = currencys.find((item) => item.id == asset);
     quantumsAmount = withdrawal.humanAmount
       ? new BigNumber(withdrawal.humanAmount).multipliedBy(currency_info.starkExResolution).toFixed()

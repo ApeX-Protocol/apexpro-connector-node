@@ -1,13 +1,12 @@
-import {ApexClient, PROD, QA, Trace} from '../src';
+import {ApexClient, ApexClientV2, PROD, QA, Trace} from '../src';
 
 describe('Public Api Example', () => {
-  let apexClient: ApexClient;
+  let apexClient: ApexClientV2;
+  const currentPerpetual = 'USDT'
 
   before(async () => {
-    // init prod client
-    // apexClient = new ApexClient(PROD);
     // init qa
-    apexClient = new ApexClient(QA);
+    apexClient = new ApexClientV2(QA);
   });
 
   it('GET System Time', async () => {
@@ -16,35 +15,34 @@ describe('Public Api Example', () => {
   });
 
   it('GET All Config Data', async () => {
-    const symbols = await apexClient.publicApi.symbols();
+    const symbols = await apexClient.publicApi.symbolsV2();
     Trace.print(symbols);
   });
 
   it('GET Market Depth', async () => {
-    const depth = await apexClient.publicApi.depth('BTCUSDC');
+    const depth = await apexClient.publicApi.depth(`BTC${currentPerpetual}`);
     Trace.print(depth);
   });
 
   it('GET Newest Trading Data', async () => {
-    const trades = await apexClient.publicApi.trades('BTCUSDC');
+    const trades = await apexClient.publicApi.trades(`BTC${currentPerpetual}`);
     Trace.print(trades);
   });
 
   //
   it('GET Candlestick Chart Data', async () => {
-    const kline = await apexClient.publicApi.klines('BTCUSDC', '1', undefined, undefined, 100);
+    const kline = await apexClient.publicApi.klines(`BTC${currentPerpetual}`, '1', undefined, undefined, 100);
     Trace.print(kline);
   });
 
   it('GET Ticker Data', async () => {
-    const tickers = await apexClient.publicApi.tickers('BTCUSDC');
+    const tickers = await apexClient.publicApi.tickers(`BTC${currentPerpetual}`);
     Trace.print(tickers);
   });
 
   // update v2
   it('GET Funding Rate History', async () => {
-    const historyFunding = await apexClient.publicApi.historyFunding('BTC-USDC');
-    // const historyFunding = await apexClient.publicApi.historyFunding('BTC-USDT');
+    const historyFunding = await apexClient.publicApi.historyFundingV2(`BTC-${currentPerpetual}`);
     Trace.print(historyFunding);
   });
 

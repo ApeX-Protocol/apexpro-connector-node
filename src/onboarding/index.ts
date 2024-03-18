@@ -7,9 +7,15 @@ import { ENV } from '../Constant';
 
 const web3 = new Web3();
 
-const createStartKey = async (signer: any, env: ENV, token: 'USDC' | 'USDT', version: 'v1' | 'v2') => {
+
+const createStartKeyAndOnboarding = async (signer: any, env: ENV, token: 'USDC' | 'USDT', rpcUrl: string, version: 'v1' | 'v2' = 'v2') => {
+  if(!web3?.currentProvider){
+    web3.setProvider(new Web3.providers.HttpProvider(rpcUrl));
+  }
+  
+
   const account = signer.address;
-  const chainId = env.networkId
+  const chainId = env.networkId;
   if (account) {
     const { key, l2KeyHash } = await genStarkKey(SigningMethod.Personal2, account, env);
 
@@ -22,6 +28,22 @@ const createStartKey = async (signer: any, env: ENV, token: 'USDC' | 'USDT', ver
     throw new Error('Invalid Account');
   }
 };
+
+const createStartKey = async (signer: any, env: ENV, token: 'USDC' | 'USDT', rpcUrl: string, version: 'v1' | 'v2' = 'v2') => {
+  if(!web3?.currentProvider){
+    web3.setProvider(new Web3.providers.HttpProvider(rpcUrl));
+  }
+  
+  const account = signer.address;
+  if (account) {
+    const { key } = await genStarkKey(SigningMethod.Personal2, account, env);
+
+    return key;
+  } else {
+    throw new Error('Invalid Account');
+  }
+};
+
 
 const getNonce = async (
   key: KeyPair,
@@ -54,12 +76,14 @@ const onboarding = async (
 ) => {
   const status = !!options.account;
   const _account = options.account;
-  let onboardingFn = basicOnboarding;
+  let onboardingFn = simplifyOnboarding;
   switch (options.onboardingVersion) {
     case 'v1':
-      onboardingFn = basicOnboarding;
+      onboardingFn = simplifyOnboarding; // force use v2 version
+      break;
     case 'v2':
       onboardingFn = simplifyOnboarding;
+      break;
   }
 
   if (status) {
@@ -79,7 +103,7 @@ const onboarding = async (
         throw new Error('Unkown Error');
       }
     } catch (e: any) {
-      throw new Error('Unkown Error');
+      throw e;
     }
   } else {
     throw new Error('Invalid Account');
@@ -90,7 +114,7 @@ const onboardingAccount = async ({
   env,
   privateKey,
   rpcUrl,
-  version = 'v1',
+  version = 'v2',
   token = 'USDC',
 }: {
   env: ENV;
@@ -103,7 +127,7 @@ const onboardingAccount = async ({
   web3.setProvider(new Web3.providers.HttpProvider(rpcUrl));
 
 
-  const res = await createStartKey(signer, env, token, version);
+  const res = await createStartKeyAndOnboarding(signer, env, token, rpcUrl, version);
   return res;
 };
 

@@ -4,6 +4,7 @@ import {
   GetHistoryFundingOptions,
   HistoryFundingObject,
   KlineObject,
+  PerpetualObject,
   SymbolObject,
   TickerObject,
   TradeObject,
@@ -30,6 +31,9 @@ export class PublicApi {
    */
   async symbols(): Promise<SymbolObject> {
     return this.apiTool.apiRequest('/api/v1/symbols', 'get');
+  }
+  async symbolsV2(): Promise<PerpetualObject> {
+    return this.apiTool.apiRequest('/api/v2/symbols', 'get');
   }
 
   /**
@@ -81,7 +85,7 @@ export class PublicApi {
       interval,
       start,
       end,
-      limit
+      limit,
     });
   }
   /**
@@ -117,6 +121,22 @@ export class PublicApi {
       limit,
     });
   }
+  async historyFundingV2(
+    symbol: string,
+    limit?: number,
+    beginTimeInclusive?: number,
+    endTimeExclusive?: number,
+    page?: number,
+  ): Promise<HistoryFundingObject[]> {
+    return this.apiTool.apiRequest('/api/v2/history-funding', 'get', {
+      symbol,
+      page,
+      beginTimeInclusive,
+      endTimeExclusive,
+      limit,
+    });
+  }
+
   /**
    * GET Check If User Exists
    * @see https://api-docs.pro.apex.exchange/#publicapi-get-check-if-user-exists

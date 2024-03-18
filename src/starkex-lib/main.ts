@@ -167,6 +167,8 @@ interface Currency {
   step_size: string;
 }
 
+
+// V1
 // 币对信息
 let symbols: any = [];
 
@@ -192,4 +194,101 @@ const setConfig = (data: any) => {
 const getConfig = () => {
   return config;
 };
-export { setSymbols, getSymbols, setCurrency, getCurrency, setConfig, getConfig };
+
+
+// V2
+// 合约对信息
+let perpetual: 'USDC' | 'USDT' | string = '';
+const setPerpetual = (data: 'USDC' | 'USDT' | string) => {
+  perpetual = data;
+};
+const getPerpetual = (): 'USDC' | 'USDT' | string => {
+  return perpetual;
+};
+
+// 币对信息
+let symbolsV2: any = [];
+
+const setSymbolsV2 = (data: any) => {
+  symbols = data;
+};
+const getSymbolsV2 = () => {
+  return symbols;
+};
+
+// 价值信息
+let currencyV2: { usdc: Currency[]; usdt: Currency[] } = { usdc: [], usdt: [] };
+
+const setUSDCCurrency = (data: any) => {
+  currencyV2.usdc = data;
+};
+const getUSDCCurrency = () => {
+  return currencyV2?.usdc;
+};
+const setUSDTCurrency = (data: any) => {
+  currencyV2.usdt = data;
+};
+const getUSDTCurrency = () => {
+  return currencyV2?.usdt;
+};
+const setCurrencyV2 = (data: any) => {
+  currencyV2 = data;
+};
+const getCurrencyV2 = () => {
+  const currentPerpetual = getPerpetual()?.toLowerCase?.();
+  if (currentPerpetual) {
+    return currencyV2?.[currentPerpetual];
+  }
+  return currencyV2;
+};
+
+// config
+let configV2 = { usdc: {}, usdt: {} };
+const setUSDCConfig = (data) => {
+  configV2.usdc = data;
+};
+const getUSDCConfig = () => {
+  return configV2?.usdc;
+};
+const setUSDTConfig = (data) => {
+  configV2.usdt = data;
+};
+const getUSDTConfig = () => {
+  return configV2?.usdt;
+};
+const setConfigV2 = (data: any) => {
+  configV2 = data;
+};
+const getConfigV2 = () => {
+  const currentPerpetual = getPerpetual()?.toLowerCase?.();
+  if (currentPerpetual) {
+    return configV2?.[currentPerpetual];
+  }
+  return configV2;
+};
+export {
+  setUSDCConfig,
+  getUSDCConfig,
+  setUSDTConfig,
+  getUSDTConfig,
+  setUSDCCurrency,
+  getUSDCCurrency,
+  setUSDTCurrency,
+  getUSDTCurrency,
+  setPerpetual,
+  getPerpetual,
+  setSymbols,
+  getSymbols,
+  setCurrency,
+  getCurrency,
+  setConfig,
+  getConfig,
+  setSymbolsV2,
+  getSymbolsV2,
+  setCurrencyV2,
+  getCurrencyV2,
+  setConfigV2,
+  getConfigV2,
+
+
+};
