@@ -6,7 +6,7 @@ import Big from 'big.js';
 
 import { ASSET_QUANTUM_SIZE, COLLATERAL_ASSET_ID_BY_NETWORK_ID } from '../constants';
 import { WithPrice, WithQuoteAmount, StarkwareAmounts, NetworkId } from '../types';
-import { ApexAsset, OrderSide, getSymbols, getCurrency } from '../main';
+import { ApexAsset, OrderSide, getSymbols, getCurrency, getPerpetual, getSymbolsV2, getCurrencyV2 } from '../main';
 import { BigNumber } from 'bignumber.js';
 
 /**
@@ -78,7 +78,7 @@ export function getStarkwareAmounts(
   // Determine side and assets.
   const isBuyingSynthetic = side === OrderSide.BUY;
   // const assetIdSynthetic = SYNTHETIC_ASSET_ID_MAP[syntheticAsset];
-  let symbols = getSymbols();
+  let symbols = getPerpetual() ? getSymbolsV2() : getSymbols();
   let symbol_info = symbols[symbol];
   let assetIdSynthetic = '';
   if (symbols[symbol]) {
@@ -118,7 +118,7 @@ export function getStarkwareAmounts(
     : '';
   // 金额精度, 买卖 currency.USDC.starkExResolution
   const quoteToken = symbol_info.settleCurrencyId;
-  const currencys = getCurrency();
+  const currencys = getPerpetual() ? getCurrencyV2() : getCurrency();
   const currency_info: any = currencys.find((item) => item.id == quoteToken);
   msg.quantumsAmountCollateral = humanPrice
     ? new BigNumber(new BigNumber(humanPrice).multipliedBy(humanSize).toNumber())
@@ -133,10 +133,10 @@ export function getStarkwareAmounts(
  */
 export function getStarkwareLimitFeeAmount(limitFee: string, symbol: string): string {
   // Constrain the limit fee to six decimals of precision. The final fee amount must be rounded up.
-  let symbols = getSymbols();
+  let symbols = getPerpetual() ? getSymbolsV2() : getSymbols();
   let symbol_info = symbols[symbol];
   const quoteToken = symbol_info.settleCurrencyId;
-  const currencys = getCurrency();
+  const currencys = getPerpetual() ? getCurrencyV2() : getCurrency();
   const currency_info: any = currencys.find((item) => item.id == quoteToken);
   return new BigNumber(limitFee).multipliedBy(currency_info.starkExResolution).toFixed();
   // return new Big(limitFee)

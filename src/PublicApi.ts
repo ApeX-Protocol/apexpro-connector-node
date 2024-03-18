@@ -29,7 +29,10 @@ export class PublicApi {
    * GET All Config Data
    * @see https://api-docs.pro.apex.exchange/#publicapi-get-all-config-data
    */
-  async symbols(): Promise<PerpetualObject> {
+  async symbols(): Promise<SymbolObject> {
+    return this.apiTool.apiRequest('/api/v1/symbols', 'get');
+  }
+  async symbolsV2(): Promise<PerpetualObject> {
     return this.apiTool.apiRequest('/api/v2/symbols', 'get');
   }
 
@@ -82,7 +85,7 @@ export class PublicApi {
       interval,
       start,
       end,
-      limit
+      limit,
     });
   }
   /**
@@ -110,6 +113,21 @@ export class PublicApi {
     endTimeExclusive?: number,
     page?: number,
   ): Promise<HistoryFundingObject[]> {
+    return this.apiTool.apiRequest('/api/v1/history-funding', 'get', {
+      symbol,
+      page,
+      beginTimeInclusive,
+      endTimeExclusive,
+      limit,
+    });
+  }
+  async historyFundingV2(
+    symbol: string,
+    limit?: number,
+    beginTimeInclusive?: number,
+    endTimeExclusive?: number,
+    page?: number,
+  ): Promise<HistoryFundingObject[]> {
     return this.apiTool.apiRequest('/api/v2/history-funding', 'get', {
       symbol,
       page,
@@ -118,6 +136,7 @@ export class PublicApi {
       limit,
     });
   }
+
   /**
    * GET Check If User Exists
    * @see https://api-docs.pro.apex.exchange/#publicapi-get-check-if-user-exists
