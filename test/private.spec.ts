@@ -100,71 +100,71 @@ describe('Private Api Example', () => {
   });
 
 
-  // it('GET Open Orders', async () => {
-  //   const { orders } = await apexClient.privateApi.openOrders();
-  //   Trace.print(orders);
-  // });
+  it('GET Open Orders', async () => {
+    const { orders } = await apexClient.privateApi.openOrders();
+    Trace.print(orders);
+  });
 
 
-  // it('POST Cancel all Open Orders', async () => {
-  //   const symbol = `BTC-${currentPerpetual}`;
-  //   // const symbol = 'BTC-USDT';
-  //   await apexClient.privateApi.cancelAllOrder(symbol);
-  // });
+  it('POST Cancel all Open Orders', async () => {
+    const symbol = `BTC-${currentPerpetual}`;
+    // const symbol = 'BTC-USDT';
+    await apexClient.privateApi.cancelAllOrder(symbol);
+  });
 
 
-  // it('GET All Order History', async () => {
-  //   const { orders } = await apexClient.privateApi.historyOrders();
-  //   Trace.print(orders);
-  // });
+  it('GET All Order History', async () => {
+    const { orders } = await apexClient.privateApi.historyOrders();
+    Trace.print(orders);
+  });
 
 
-  // it('GET Order ID', async () => {
-  //   const orderId = '557260254170054997';
-  //   const order = await apexClient.privateApi.getOrder(orderId);
-  //   Trace.print(order);
-  // });
+  it('GET Order ID', async () => {
+    const orderId = '557260254170054997';
+    const order = await apexClient.privateApi.getOrder(orderId);
+    Trace.print(order);
+  });
 
 
-  // it('POST Cancel Order', async () => {
-  //   const orderId = '557260254170054997';
-  //   const result = await apexClient.privateApi.cancelOrder(orderId);
-  //   Trace.print(result);
-  // });
+  it('POST Cancel Order', async () => {
+    const orderId = '557260254170054997';
+    const result = await apexClient.privateApi.cancelOrder(orderId);
+    Trace.print(result);
+  });
 
 
-  // it('POST Cancel Order By ClientOrderId', async () => {
-  //   const clientOrderId = '3773562820849392';
-  //   const result = await apexClient.privateApi.cancelOrderByClientOrderId(clientOrderId);
-  //   Trace.print(result);
-  // });
+  it('POST Cancel Order By ClientOrderId', async () => {
+    const clientOrderId = '3773562820849392';
+    const result = await apexClient.privateApi.cancelOrderByClientOrderId(clientOrderId);
+    Trace.print(result);
+  });
 
-  // it('GET Order by clientOrderId', async () => {
-  //   const orderId = '3773562820849392';
-  //   const order = await apexClient.privateApi.getOrderByClientOrderId(orderId);
-  //   Trace.print(order);
-  // });
-
-
-  // it('GET Funding Rate', async () => {
-  //   const { fundingValues, totalSize } = await apexClient.privateApi.fundingRate(currentPerpetual as 'USDC' | 'USDT');
-  //   Trace.print(fundingValues, totalSize);
-  // });
+  it('GET Order by clientOrderId', async () => {
+    const orderId = '3773562820849392';
+    const order = await apexClient.privateApi.getOrderByClientOrderId(orderId);
+    Trace.print(order);
+  });
 
 
-  // it('GET User Historial Profit and Loss', async () => {
-  //   const { historicalPnl, totalSize } = await apexClient.privateApi.historicalPNL();
-  //   Trace.print(historicalPnl, totalSize);
-  // });
+  it('GET Funding Rate', async () => {
+    const { fundingValues, totalSize } = await apexClient.privateApi.fundingRate(currentPerpetual as 'USDC' | 'USDT');
+    Trace.print(fundingValues, totalSize);
+  });
 
 
-  // it("GET Yesterday's Profit & Loss", async () => {
-  //   const yesterdayPNL = await apexClient.privateApi.yesterdayPNL();
-  //   Trace.print(yesterdayPNL);
-  // });
+  it('GET User Historial Profit and Loss', async () => {
+    const { historicalPnl, totalSize } = await apexClient.privateApi.historicalPNL();
+    Trace.print(historicalPnl, totalSize);
+  });
 
-  // it('GET Account Balance', async () => {
-  //   const accountBalance = await apexClient.privateApi.accountBalance();
-  //   Trace.print(accountBalance);
-  // });
+
+  it("GET Yesterday's Profit & Loss", async () => {
+    const yesterdayPNL = await apexClient.privateApi.yesterdayPNL();
+    Trace.print(yesterdayPNL);
+  });
+
+  it('GET Account Balance', async () => {
+    const accountBalance = await apexClient.privateApi.accountBalance();
+    Trace.print(accountBalance);
+  });
 });
