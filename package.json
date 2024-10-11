@@ -1,6 +1,6 @@
 {
   "name": "apexpro-connector-node",
-  "version": "0.1.0",
+  "version": "0.2.0-alpha.1",
   "description": "ApexPro Connector Node.js SDK",
   "main": "lib/index.js",
   "module": "lib/index.js",
