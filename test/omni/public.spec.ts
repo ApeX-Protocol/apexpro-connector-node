@@ -1,13 +1,12 @@
-import {ApexClient, PROD, QA, Trace} from '../src';
+import { Trace } from '../../src/omni/tool/Tool';
+import { ApexClient, OMNI_QA } from '../../src';
 
-describe('Public Api Example', () => {
-  let apexClient: ApexClient;
+describe('Omni Public Api Example', () => {
+  let apexClient: ApexClient.omni;
+  const env = OMNI_QA
 
   before(async () => {
-    // init prod client
-    // apexClient = new ApexClient(PROD);
-    // init qa
-    apexClient = new ApexClient(QA);
+    apexClient = new ApexClient.omni(env);
   });
 
   it('GET System Time', async () => {

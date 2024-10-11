@@ -119,3 +119,8 @@ docs
 package-lock.json
 doc
 
+
+mochawesome-report
+
+lib
+src/mock/index.local.ts

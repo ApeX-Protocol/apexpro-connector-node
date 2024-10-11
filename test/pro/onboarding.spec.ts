@@ -1,4 +1,4 @@
-import { ENV, Trace, createStartKey, onboardingAccount, web3 } from '../src';
+import { ENV, Trace, createStartKey, onboardingAccount, web3 } from "../../src/pro";
 
 const useProd = false
 const privateKey = '42b81f4a8becf2ca03ec734c002c69d7150989a00cbb00b439d9af782545451a';

@@ -1,8 +1,12 @@
 {
+  "exclude": [
+    "node_modules",
+  ],
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "target": "ES2020",
     "module": "commonjs",
-    "outDir": "lib"
+    "outDir": "lib",
+    "skipLibCheck": true
   }
 }
