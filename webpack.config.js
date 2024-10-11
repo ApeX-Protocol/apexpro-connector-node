@@ -1,4 +1,5 @@
 const path = require('path')
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   mode: 'production',
@@ -13,4 +14,14 @@ module.exports = {
     umdNamedDefine: true,
     globalObject: 'this',
   },
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, './src/packages/node-dist'),
+          to: path.resolve(__dirname, './lib/packages/node-dist')
+        },
+      ]
+    })
+  ]
 }
