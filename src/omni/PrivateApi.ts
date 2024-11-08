@@ -283,6 +283,15 @@ export class PrivateApi {
     return this.request('/open-orders', 'get', {});
   }
 
+   /**
+   * GET Order ID
+   * @see https://api-docs.pro.apex.exchange/#privateapi-v3-get-order-id
+   * @param id
+   */
+  async getOrder(id: string): Promise<OrderObject> {
+    return this.request('/order', 'get', { id });
+  }
+
   async historyOrders(params?: {
     symbol?: string;
     status?: 'PENDING' | 'OPEN' | 'FILLED' | 'CANCELED' | 'EXPIRED' | 'UNTRIGGERED';
