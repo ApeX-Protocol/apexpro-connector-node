@@ -2,6 +2,7 @@ import { ApiKeyCredentials } from "./interface";
 import { ZkLinkSigner } from "../packages/node-dist/zklink-sdk-node";
 import { ApiTool } from "./tool/ApiTool";
 import { Clock } from "./tool/Clock";
+import { ApexClientOmni } from "./ApexClient";
 
 export class ClientConfig {
   public apiKeyCredentials: ApiKeyCredentials;
@@ -11,6 +12,8 @@ export class ClientConfig {
   public signer: ZkLinkSigner;
   public clock: Clock;
   public apiTool: ApiTool;
+
+  public client: ApexClientOmni
 }
 
 export class ENV {
@@ -25,6 +28,7 @@ export class ENV {
     this.networkId = networkId;
     this.isProd = +networkId === 1;
     this.registerChainId = +networkId === 1 ? 1 : 5
+
   }
 }
 

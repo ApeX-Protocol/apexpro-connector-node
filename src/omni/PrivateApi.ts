@@ -83,7 +83,6 @@ export class PrivateApi {
   ): string {
     const messageString: string =
       new Date(isoTimestamp).getTime() + method.toUpperCase() + requestPath + (isNullOrBlank(params) ? '' : params);
-    console.log(messageString);
     const key = Buffer.from(this.clientConfig.apiKeyCredentials.secret).toString('base64');
     const hash = cryptojs.HmacSHA256(messageString, key);
     return hash.toString(cryptojs.enc.Base64);
@@ -149,7 +148,6 @@ export class PrivateApi {
   };
 
   async getZKContractSignatureObj (params: ObjectType) {
-    console.log('params', params);
     const invalidKeys = Object.entries(params)
       ?.map(([key, item]) => {
         if (item === '' || item === undefined) {
@@ -190,6 +188,7 @@ export class PrivateApi {
     );
 
     let contractor = newContract(tx_builder);
+    this.clientConfig.client.initZkSigner?.();
 
     contractor?.sign(this.clientConfig.signer);
     const tx = contractor.jsValue();

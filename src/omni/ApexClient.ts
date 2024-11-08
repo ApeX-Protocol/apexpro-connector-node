@@ -18,6 +18,8 @@ export class ApexClientOmni {
   signer: ZkLinkSigner;
   symbols: { [key: string]: any };
 
+  private seed: string
+
   constructor(env: ENV = PROD) {
     this.env = env;
     this.apiTool = new ApiTool(env);
@@ -30,22 +32,27 @@ export class ApexClientOmni {
     clientConfig.networkId = this.env.networkId;
     clientConfig.clock = new Clock();
     clientConfig.apiKeyCredentials = apiKeyCredentials;
-    await this.initZkSigner(seed);
-    clientConfig.signer = this.signer
+    clientConfig.client = this
+
+    this.clientConfig = clientConfig;
+    this.seed = seed;
+    this.initZkSigner()
 
     this.privateApi = new PrivateApi(clientConfig);
-    
+
     await this.initClock(clientConfig);
     await this.initConfig(clientConfig);
   }
 
-  private async initZkSigner(seed: string) {
-    const signer = ZkLinkSigner.ethSig(seed);
+  public initZkSigner() {
+    const signer = ZkLinkSigner.ethSig(this.seed);
     this.signer = signer
+    this.clientConfig.signer = this.signer
+
+    return signer
   }
 
   private async initClock(clientConfig: ClientConfig) {
-    this.clientConfig = clientConfig;
     const { time } = await this.publicApi.time();
     this.clientConfig.clock.setTimestampAdjustment(time - new Date().getTime());
   }
