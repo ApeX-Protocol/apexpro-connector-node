@@ -1,6 +1,6 @@
 {
   "name": "apexpro-connector-node",
-  "version": "0.2.0-alpha.9",
+  "version": "0.2.0",
   "description": "ApexPro Connector Node.js SDK",
   "main": "lib/index.js",
   "module": "lib/index.js",
@@ -10,8 +10,7 @@
   ],
   "repository": "https://github.com/ApeX-Protocol/apexpro-connector-node",
   "authors": [
-    "lihang941",
-    "RoderickIsWatching"
+    "lihang941"
   ],
   "scripts": {
     "test": "mocha test/**.spec.ts",
