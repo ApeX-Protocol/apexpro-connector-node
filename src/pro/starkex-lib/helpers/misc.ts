@@ -6,7 +6,7 @@
 
 let nodeCrypto;
 
-if (typeof window !== 'undefined') {
+if (typeof window === 'undefined') {
   // 浏览器环境
   // tslint:disable-next-line:no-var-requires
   nodeCrypto = require('crypto-js');
