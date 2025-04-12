@@ -28,10 +28,12 @@
   },
   "include": [
     "src/**/*",
+    "src/packages/node-dist/zklink-sdk-node_bg.wasm",
+    "src/packages/node-dist/zklink-sdk-node_bg.wasm.d.ts"
   ],
   "exclude": [
     "mock",
     "node_modules",
     "**/*.spec.ts"
-  ],
+  ]
 }

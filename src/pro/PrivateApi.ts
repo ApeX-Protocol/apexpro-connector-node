@@ -1,5 +1,15 @@
 import { addOrderExpirationBufferHours, isoTimestampToEpochHours, SignableOrder } from './starkex-lib';
-import cryptojs from 'crypto-js';
+let cryptojs;
+
+if (typeof window !== 'undefined') {
+  // 浏览器环境
+  // tslint:disable-next-line:no-var-requires
+  cryptojs = require('crypto-js');
+} else {
+  // Node.js 环境
+  // tslint:disable-next-line:no-var-requires
+  cryptojs = require('crypto-browserify');
+}
 import {
   AccountBalanceObject,
   AccountObject,

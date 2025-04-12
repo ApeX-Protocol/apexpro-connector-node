@@ -215,21 +215,6 @@ export interface WorstPriceObject {
   bidOnePrice: string;
   askOnePrice: string;
 }
-export interface CreateOrderOptionsObject {
-  clientOrderId: string;
-  positionId: string;
-  symbol: string;
-  side: 'BUY' | 'SELL';
-  type: 'LIMIT' | 'MARKET' | 'STOP_LIMIT' | 'STOP_MARKET' | 'TAKE_PROFIT_LIMIT' | 'TAKE_PROFIT_MARKET';
-  size: string;
-  price: string;
-  limitFee: string;
-  timeInForce?: 'GOOD_TIL_CANCEL' | 'FILL_OR_KILL' | 'IMMEDIATE_OR_CANCEL' | 'POST_ONLY';
-  triggerPrice?: string;
-  trailingPercent?: string;
-  reduceOnly?: boolean;
-  brokerId?: string;
-}
 
 export interface FundingRateObject {
   id: string;
@@ -260,26 +245,6 @@ export interface HistoricalPNLObject {
   liquidateFee: string;
 }
 
-export interface OrderResponseObject {
-  id: string;
-  clientId?: string;
-  accountId: string;
-  symbol: Market;
-  side: OrderSide;
-  price: string;
-  triggerPrice?: string | null;
-  trailingPercent?: string | null;
-  size: string;
-  remainingSize: string;
-  type: OrderType;
-  createdAt: ISO8601;
-  unfillableAt?: ISO8601 | null;
-  expiresAt?: ISO8601;
-  status: OrderStatus;
-  timeInForce: TimeInForce;
-  postOnly: boolean;
-  cancelReason?: string | null;
-}
 
 export interface AccountBalanceObject {
   totalEquityValue: string;

@@ -11,10 +11,10 @@ npm install apexpro-connector-node
 
 ```javascript
 // QA
-let apexClient:ApexClient = new ApexClient(QA);
+let apexClient:ApexClient = new ApexClient.omni(OMNI_QA);
 
 // PROD
-let apexClient:ApexClient = new ApexClient(PROD);
+let apexClient:ApexClient = new ApexClient.omni(OMNI);
 ```
 
 

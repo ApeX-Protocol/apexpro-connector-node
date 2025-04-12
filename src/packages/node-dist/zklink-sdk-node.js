@@ -4219,11 +4219,22 @@ module.exports.__wbindgen_closure_wrapper7125 = function(arg0, arg1, arg2) {
     return addHeapObject(ret);
 };
 
-const path = require('path').join(__dirname, 'zklink-sdk-node_bg.wasm');
-const bytes = require('fs').readFileSync(path);
 
-const wasmModule = new WebAssembly.Module(bytes);
-const wasmInstance = new WebAssembly.Instance(wasmModule, imports);
-wasm = wasmInstance.exports;
-module.exports.__wasm = wasm;
+let wasmModule, wasmInstance;
+
+if (typeof window === 'undefined') { // Node.js environment
+    const path = require('path').join(__dirname, 'zklink-sdk-node_bg.wasm');
+    const bytes = require('fs').readFileSync(path);
+    wasmModule = new WebAssembly.Module(bytes);
+    wasmInstance = new WebAssembly.Instance(wasmModule, imports);
+    wasm = wasmInstance.exports;
+} else { // Browser environment
+    fetch('https://raw.githubusercontent.com/ApeX-Protocol/apexpro-connector-node/refs/heads/main/src/packages/node-dist/zklink-sdk-node_bg.wasm').then(resp=>{
+        return resp.arrayBuffer()
+    }).then(byteBuffer=>{
+        wasmModule = new WebAssembly.Module(byteBuffer);
+        wasmInstance = new WebAssembly.Instance(wasmModule, imports);
+        wasm = wasmInstance.exports;
+    })
+}
 

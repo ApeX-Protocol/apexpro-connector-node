@@ -11,7 +11,19 @@ import {
   UserObject,
   WorstPriceObject,
 } from './interface';
-import cryptojs from 'crypto-js';
+let cryptojs;
+
+if (typeof window === 'undefined') {
+  // 浏览器环境
+  // tslint:disable-next-line:no-var-requires
+  cryptojs = require('crypto-js');
+} else {
+  // Node.js 环境
+  // tslint:disable-next-line:no-var-requires
+  cryptojs = require('crypto-browserify');
+}
+
+
 import { generateRandomClientIdOmni, isNullOrBlank, removePrefix } from './tool/Tool';
 import BigNumber from 'bignumber.js';
 import { ContractBuilder, newContract } from '../packages/node-dist/zklink-sdk-node';
@@ -109,7 +121,7 @@ export class PrivateApi {
     endTimeExclusive?: number,
     page?: number,
     orderType?: 'ACTIVE' | 'CONDITION' | 'HISTORY',
-  ): Promise<{ orders: OrderObject[] }> {
+  ): Promise<{ orders: OrderObject[],totalSize:number }> {
     return this.request('/fills', 'get', {
       symbol,
       status,
@@ -281,6 +293,15 @@ export class PrivateApi {
 
   async openOrders(): Promise<{ orders: OrderObject[] }> {
     return this.request('/open-orders', 'get', {});
+  }
+
+
+  async getOrder(id: string): Promise<OrderObject> {
+    return this.request('/order', 'get', { id });
+  }
+
+  async getOrderByClientOrderId(id: string): Promise<OrderObject> {
+    return this.request('/order-by-client-order-id', 'get', { id });
   }
 
   async historyOrders(params?: {

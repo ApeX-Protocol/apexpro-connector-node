@@ -92,7 +92,7 @@ describe('Omni Private Api Example', () => {
   });
 
   it('GET All Order History', async () => {
-    const { orders } = await apexClient.privateApi.historyOrders({orderType: 'ACTIVE'});
+    const { orders } = await apexClient.privateApi.historyOrders();
     Trace.print(orders);
   });
 
@@ -122,4 +122,18 @@ describe('Omni Private Api Example', () => {
     const accountBalance = await apexClient.privateApi.accountBalance();
     Trace.print(accountBalance);
   });
+
+  it('GET Get Order', async () => {
+    const orderId = "698914499098312793"
+    const order = await apexClient.privateApi.getOrder(orderId);
+    Trace.print(order);
+  });
+
+  it('GET Get Client Order', async () => {
+    const clientOrderId = "apexomni-634283468140839001-1744471003321-775651"
+    const order = await apexClient.privateApi.getOrderByClientOrderId(clientOrderId);
+    Trace.print(order);
+  });
+
+
 });
