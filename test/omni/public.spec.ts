@@ -20,29 +20,29 @@ describe('Omni Public Api Example', () => {
   });
 
   it('GET Market Depth', async () => {
-    const depth = await apexClient.publicApi.depth('BTCUSDC');
+    const depth = await apexClient.publicApi.depth('BTCUSDT');
     Trace.print(depth);
   });
 
   it('GET Newest Trading Data', async () => {
-    const trades = await apexClient.publicApi.trades('BTCUSDC');
+    const trades = await apexClient.publicApi.trades('BTCUSDT');
     Trace.print(trades);
   });
 
   //
   it('GET Candlestick Chart Data', async () => {
-    const kline = await apexClient.publicApi.klines('BTCUSDC', '1', undefined, undefined, 100);
+    const kline = await apexClient.publicApi.klines('BTCUSDT', '1', undefined, undefined, 100);
     Trace.print(kline);
   });
 
   it('GET Ticker Data', async () => {
-    const tickers = await apexClient.publicApi.tickers('BTCUSDC');
+    const tickers = await apexClient.publicApi.tickers('BTCUSDT');
     Trace.print(tickers);
   });
 
   // update v2
   it('GET Funding Rate History', async () => {
-    const historyFunding = await apexClient.publicApi.historyFunding('BTC-USDC');
+    const historyFunding = await apexClient.publicApi.historyFunding('BTC-USDT');
     // const historyFunding = await apexClient.publicApi.historyFunding('BTC-USDT');
     Trace.print(historyFunding);
   });
