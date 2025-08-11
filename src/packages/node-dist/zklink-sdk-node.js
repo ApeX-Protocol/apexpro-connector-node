@@ -4229,12 +4229,6 @@ if (typeof window === 'undefined') { // Node.js environment
     wasmInstance = new WebAssembly.Instance(wasmModule, imports);
     wasm = wasmInstance.exports;
 } else { // Browser environment
-    fetch('https://raw.githubusercontent.com/ApeX-Protocol/apexpro-connector-node/refs/heads/main/src/packages/node-dist/zklink-sdk-node_bg.wasm').then(resp=>{
-        return resp.arrayBuffer()
-    }).then(byteBuffer=>{
-        wasmModule = new WebAssembly.Module(byteBuffer);
-        wasmInstance = new WebAssembly.Instance(wasmModule, imports);
-        wasm = wasmInstance.exports;
-    })
+    throw new Error("This WebAssembly module is not designed to run in a browser environment. Please use the Node.js version.");
 }
 

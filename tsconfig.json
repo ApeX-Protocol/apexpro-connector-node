@@ -29,7 +29,9 @@
   "include": [
     "src/**/*",
     "src/packages/node-dist/zklink-sdk-node_bg.wasm",
-    "src/packages/node-dist/zklink-sdk-node_bg.wasm.d.ts"
+    "src/packages/node-dist/zklink-sdk-node_bg.wasm.d.ts",
+    "src/packages/web-dist/zklink-sdk-web_bg.wasm",
+    "src/packages/web-dist/zklink-sdk-web_bg.wasm.d.ts"
   ],
   "exclude": [
     "mock",

@@ -1,13 +1,5 @@
 import axios from 'axios';
-let cryptojs;
-
-if (typeof window === 'undefined') {
-  // tslint:disable-next-line:no-var-requires
-  cryptojs = require('crypto-js');
-} else {
-  // tslint:disable-next-line:no-var-requires
-  cryptojs = require('crypto-browserify');
-}
+const cryptojs = require('crypto-js');
 // import queryString from 'query-string';
 import BN from 'bn.js';
 

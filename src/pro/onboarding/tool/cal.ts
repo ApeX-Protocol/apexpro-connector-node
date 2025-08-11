@@ -1,4 +1,4 @@
-import ethers from "ethers"
+import * as ethers from "ethers";
 
 export const solidityKeccak256 = (type: string[], values: string[])=>{
     // web3

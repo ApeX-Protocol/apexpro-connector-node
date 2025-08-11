@@ -11,21 +11,11 @@ import {
   UserObject,
   WorstPriceObject,
 } from './interface';
-let cryptojs;
-
-if (typeof window === 'undefined') {
-  // tslint:disable-next-line:no-var-requires
-  cryptojs = require('crypto-js');
-} else {
-  // tslint:disable-next-line:no-var-requires
-  cryptojs = require('crypto-browserify');
-}
-
-
+const cryptojs = require('crypto-js');
 import { generateRandomClientIdOmni, isNullOrBlank, removePrefix } from './tool/Tool';
 import BigNumber from 'bignumber.js';
-import { ContractBuilder, newContract } from '../packages/node-dist/zklink-sdk-node';
 import { maxUint32, maxUint64, sha256 } from 'viem';
+import {getContractBuilder,  getNewContract} from "../ZKProxy";
 
 export class PrivateApi {
   private clientConfig: ClientConfig;
@@ -183,7 +173,10 @@ export class PrivateApi {
     const slotId = formattedSlotId.mod(formattedUint64).dividedBy(formattedUint32).integerValue(BigNumber.ROUND_FLOOR);
     const nonce = formattedNonce.mod(formattedUint32).plus(formattedUint32).mod(formattedUint32);
 
-    let tx_builder = new ContractBuilder(
+
+    const cb = getContractBuilder();
+
+    const tx_builder = new cb(
       accountId.toNumber(),
       0,
       slotId.toNumber(),
@@ -197,7 +190,8 @@ export class PrivateApi {
       false,
     );
 
-    let contractor = newContract(tx_builder);
+    const nc = getNewContract();
+    let contractor = nc(tx_builder);
     this.clientConfig.client.initZkSigner?.();
 
     contractor?.sign(this.clientConfig.signer);

@@ -1,6 +1,6 @@
 {
   "name": "apexpro-connector-node",
-  "version": "0.2.0-alpha.14",
+  "version": "0.2.0-alpha.15",
   "description": "ApexPro Connector Node.js SDK",
   "main": "lib/index.js",
   "module": "lib/index.js",
@@ -22,7 +22,9 @@
     "build": "npm run  clean && npm run build:cjs ",
     "build:cjs": "tsc -p tsconfig.cjs.json --diagnostics && npm run copy",
     "build:umd": "webpack",
-    "copy": "copyfiles -f src/packages/node-dist/zklink-sdk-node_bg.wasm lib/packages/node-dist/ && copyfiles -f  src/packages/node-dist/zklink-sdk-node_bg.wasm.d.ts lib/packages/node-dist/ ",
+    "copy": "npm run copy1 && npm run copy2",
+    "copy1": "copyfiles -f src/packages/node-dist/zklink-sdk-node_bg.wasm lib/packages/node-dist/ && copyfiles -f  src/packages/node-dist/zklink-sdk-node_bg.wasm.d.ts lib/packages/node-dist/ ",
+    "copy2": "copyfiles -f src/packages/web-dist/zklink-sdk-web_bg.wasm lib/packages/web-dist/ && copyfiles -f  src/packages/web-dist/zklink-sdk-web_bg.wasm.d.ts lib/packages/web-dist/ ",
     "format": "prettier --write \"(src|test)/**/*.ts\"",
     "lint": "tslint -p tsconfig.json --fix",
     "doc": "typedoc --excludeExternals --excludePrivate --out docs ./src/**",

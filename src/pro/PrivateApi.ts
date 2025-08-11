@@ -1,13 +1,6 @@
 import { addOrderExpirationBufferHours, isoTimestampToEpochHours, SignableOrder } from './starkex-lib';
-let cryptojs;
+const cryptojs = require('crypto-js');
 
-if (typeof window === 'undefined') {
-  // tslint:disable-next-line:no-var-requires
-  cryptojs = require('crypto-js');
-} else {
-  // tslint:disable-next-line:no-var-requires
-  cryptojs = require('crypto-browserify');
-}
 import {
   AccountBalanceObject,
   AccountObject,

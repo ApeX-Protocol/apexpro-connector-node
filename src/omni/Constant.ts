@@ -1,5 +1,5 @@
 import { ApiKeyCredentials } from "./interface";
-import { ZkLinkSigner } from "../packages/node-dist/zklink-sdk-node";
+import { ZkLinkSigner } from "../ZKProxy";
 import { ApiTool } from "./tool/ApiTool";
 import { Clock } from "./tool/Clock";
 import { ApexClientOmni } from "./ApexClient";

@@ -4,7 +4,7 @@ import { ClientConfig, ENV, PROD } from './Constant';
 import { Clock } from './tool/Clock';
 import { AccountObject, ApiKeyCredentials, UserObject } from './interface';
 import { ApiTool } from './tool/ApiTool';
-import { ZkLinkSigner } from '../packages/node-dist/zklink-sdk-node';
+import {ZkLinkSigner, getZkLinkSigner, initZk} from '../ZKProxy';
 import { getSymbolsWithBaseInfo } from './tool/Tool';
 
 export class ApexClientOmni {
@@ -36,6 +36,7 @@ export class ApexClientOmni {
 
     this.clientConfig = clientConfig;
     this.seed = seed;
+    await initZk();
     this.initZkSigner()
 
     this.privateApi = new PrivateApi(clientConfig);
@@ -45,7 +46,7 @@ export class ApexClientOmni {
   }
 
   public initZkSigner() {
-    const signer = ZkLinkSigner.ethSig(this.seed);
+    const signer = getZkLinkSigner().ethSig(this.seed);
     this.signer = signer
     this.clientConfig.signer = this.signer
 

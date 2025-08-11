@@ -2,19 +2,7 @@
  * Other helper functions for converting data for Starkware.
  */
 
-
-
-let nodeCrypto;
-
-if (typeof window === 'undefined') {
-  // 浏览器环境
-  // tslint:disable-next-line:no-var-requires
-  nodeCrypto = require('crypto-js');
-} else {
-  // Node.js 环境
-  // tslint:disable-next-line:no-var-requires
-  nodeCrypto = require('crypto-browserify');
-}
+const nodeCrypto = require('crypto-js');
 
 import BN from 'bn.js';
 
