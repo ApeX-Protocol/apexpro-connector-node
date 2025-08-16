@@ -259,13 +259,13 @@ export interface CreateOrderOptions {
   takerFeeRate: string;
   symbol: string;
   side: string; // 'BUY' | 'SELL'
-  type: string; // 'LIMIT' | 'MARKET' | 'CONDITION'
+  type: string; // 'LIMIT' | 'MARKET' | 'STOP_LIMIT' | 'STOP_MARKET' | 'TAKE_PROFIT_LIMIT' | 'TAKE_PROFIT_MARKET'
   size: string;
   price: string;
   limitFee: number | string;
   triggerPriceWithType?: number; // 触发价格对应类型的最新价格 （当前为：markPrice, indexPrice)
   triggerPrice?: string;
-  timeInForce?: string; // 'GOOD_TIL_CANCEL';
+  timeInForce?: string; // 'GOOD_TIL_CANCEL' | 'FILL_OR_KILL' | 'IMMEDIATE_OR_CANCEL' | 'POST_ONLY'
   reduceOnly?: boolean;
   trailingPercent?: string;
   expiration?: number; // Date.now() + 30 * 24 * 60 * 60 * 1000, // 暂定1个月有效期
