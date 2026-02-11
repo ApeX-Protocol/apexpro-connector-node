@@ -135,5 +135,14 @@ describe('Omni Private Api Example', () => {
     Trace.print(order);
   });
 
+  it('POST Submit Trade Reward', async function () {
+    const rewardId = process.env.OMNI_REWARD_ID || '300001';
+    if (!rewardId) {
+      this.skip();
+      return;
+    }
+    const result = await apexClient.privateApi.submitTradeReward(rewardId);
+    Trace.print(result);
+  });
 
 });
